@@ -120,14 +120,10 @@ func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64
 
 	log.Debugf("Response body: %v", string(body))
 
-	timestamp := gjson.GetBytes(body, "timestamp").Int()
-
-	log.Debugf("Response timestamp: %v", timestamp)
-
 	orderBook := &model.OrderBook{
 		Base:  base,
 		Quote: quote,
-		Time:  time.Unix(timestamp, 0),
+		Time:  time.Unix(gjson.GetBytes(body, "timestamp").Int(), 0),
 	}
 
 	gjson.GetBytes(body, "asks").ForEach(func(k, v gjson.Result) bool {
@@ -155,4 +151,48 @@ func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64
 	})
 
 	return orderBook, nil
+}
+
+// GetTrades 获取历史成交
+// currency: quote_base
+// btc_cny: 比特币/人民币
+// ltc_cny: 莱特币/人民币
+// eth_cny: 以太币/人民币
+// etc_cny: ETC币/人民币
+// bts_cny: BTS币/人民币
+// since: 从指定交易 ID 后 50 条数据
+func (cb *CHBTC) GetTrades(base string, quote string, since int) (*model.Trades, error) {
+	url := MarketAPI + "trades?currency=" + quote + "_" + base
+	if since != 0 {
+		url += "&since=" + strconv.Itoa(since)
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	trades := new(model.Trades)
+
+	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
+		trade := &model.Trade{
+			Amount:    v.Get("amount").Float(),
+			Price:     v.Get("price").Float(),
+			Tid:       v.Get("tid").Int(),
+			TradeType: v.Get("trade_type").String(),
+			Type:      v.Get("type").String(),
+			Date:      time.Unix(v.Get("date").Int(), 0),
+		}
+		*trades = append(*trades, trade)
+		return true
+	})
+
+	return trades, nil
 }

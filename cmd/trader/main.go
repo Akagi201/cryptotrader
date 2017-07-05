@@ -23,4 +23,12 @@ func main() {
 
 	orderBookStr := spew.Sdump(orderBook)
 	log.Infof("Get orderbook: %+v", orderBookStr)
+
+	trades, err := api.GetTrades("cny", "eth", 0)
+	if err != nil {
+		log.Errorf("Get trades failed, err: %v", err)
+	}
+
+	tradesStr := spew.Sdump(trades)
+	log.Infof("Get trades: %+v", tradesStr)
 }
