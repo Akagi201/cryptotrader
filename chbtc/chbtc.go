@@ -1,10 +1,11 @@
-// Package chbtc
+// Package chbtc CHBTC rest api package
 package chbtc
 
 import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/Akagi201/cryptotrader/model"
 	log "github.com/sirupsen/logrus"
@@ -28,6 +29,7 @@ func New(accessKey string, secretKey string) *CHBTC {
 	}
 }
 
+// GetTicker 行情
 func (cb *CHBTC) GetTicker(base string, quote string) (*model.Ticker, error) {
 	log.Debugf("Currency base: %s, quote: %s", base, quote)
 
@@ -91,4 +93,66 @@ func (cb *CHBTC) GetTicker(base string, quote string) (*model.Ticker, error) {
 		High: high,
 		Vol:  vol,
 	}, nil
+}
+
+// GetOrderBook 市场深度
+// size: 档位 1-50, 如果有合并深度, 只能返回 5 档深度
+// merge:
+// btc_cny: 可选 1, 0.1
+// ltc_cny: 可选 0.5, 0.3, 0.1
+// eth_cny: 可选 0.5, 0.3, 0.1
+// etc_cny: 可选 0.3, 0.1
+// bts_cny: 可选 1, 0.1
+func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64) (*model.OrderBook, error) {
+	url := MarketAPI + "depth?currency=" + quote + "_" + base + "&size=" + strconv.Itoa(size) + "&merge=" + strconv.FormatFloat(merge, 'f', -1, 64)
+
+	log.Debugf("Request url: %v", url)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	timestamp := gjson.GetBytes(body, "timestamp").Int()
+
+	log.Debugf("Response timestamp: %v", timestamp)
+
+	orderBook := &model.OrderBook{
+		Base:  base,
+		Quote: quote,
+		Time:  time.Unix(timestamp, 0),
+	}
+
+	gjson.GetBytes(body, "asks").ForEach(func(k, v gjson.Result) bool {
+		price := v.Array()[0].Float()
+		amount := v.Array()[1].Float()
+
+		orderBook.Asks = append(orderBook.Asks, &model.Order{
+			Price:  price,
+			Amount: amount,
+		})
+
+		return true
+	})
+
+	gjson.GetBytes(body, "bids").ForEach(func(k, v gjson.Result) bool {
+		price := v.Array()[0].Float()
+		amount := v.Array()[1].Float()
+
+		orderBook.Bids = append(orderBook.Bids, &model.Order{
+			Price:  price,
+			Amount: amount,
+		})
+
+		return true
+	})
+
+	return orderBook, nil
 }

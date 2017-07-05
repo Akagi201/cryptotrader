@@ -2,15 +2,25 @@ package main
 
 import (
 	"github.com/Akagi201/cryptotrader/chbtc"
+	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
 	api := chbtc.New("", "")
 
-	res, err := api.GetTicker("cny", "eth")
+	ticker, err := api.GetTicker("cny", "eth")
 	if err != nil {
 		log.Errorf("Get ticker failed, err: %v", err)
 	}
-	log.Infof("Get ticker: %+v", res)
+
+	log.Infof("Get ticker: %+v", ticker)
+
+	orderBook, err := api.GetOrderBook("cny", "eth", 3, 0.1)
+	if err != nil {
+		log.Errorf("Get orderbook failed, err: %v", err)
+	}
+
+	orderBookStr := spew.Sdump(orderBook)
+	log.Infof("Get orderbook: %+v", orderBookStr)
 }
