@@ -131,24 +131,18 @@ func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64
 	}
 
 	gjson.GetBytes(body, "asks").ForEach(func(k, v gjson.Result) bool {
-		price := v.Array()[0].Float()
-		amount := v.Array()[1].Float()
-
 		orderBook.Asks = append(orderBook.Asks, &model.Order{
-			Price:  price,
-			Amount: amount,
+			Price:  v.Array()[0].Float(),
+			Amount: v.Array()[1].Float(),
 		})
 
 		return true
 	})
 
 	gjson.GetBytes(body, "bids").ForEach(func(k, v gjson.Result) bool {
-		price := v.Array()[0].Float()
-		amount := v.Array()[1].Float()
-
 		orderBook.Bids = append(orderBook.Bids, &model.Order{
-			Price:  price,
-			Amount: amount,
+			Price:  v.Array()[0].Float(),
+			Amount: v.Array()[1].Float(),
 		})
 
 		return true
