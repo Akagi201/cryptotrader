@@ -30,5 +30,13 @@ func main() {
 	}
 
 	tradesStr := spew.Sdump(trades)
-	log.Infof("Get trades: %+v", tradesStr)
+	log.Infof("Get trades: %v", tradesStr)
+
+	kline, err := api.GetKline("cny", "eth", "1min", 0, 0)
+	if err != nil {
+		log.Errorf("Get kline failed, err: %v", err)
+	}
+
+	klineStr := spew.Sdump(kline)
+	log.Infof("Get kline: %v", klineStr)
 }

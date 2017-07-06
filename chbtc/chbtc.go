@@ -196,3 +196,75 @@ func (cb *CHBTC) GetTrades(base string, quote string, since int) (*model.Trades,
 
 	return trades, nil
 }
+
+// GetKline 获取 K 线数据
+// currency: quote_base
+// btc_cny: 比特币/人民币
+// ltc_cny: 莱特币/人民币
+// eth_cny: 以太币/人民币
+// etc_cny: ETC币/人民币
+// bts_cny: BTS币/人民币
+// typ:
+// 1min: 1 分钟
+// 3min: 3 分钟
+// 5min: 5 分钟
+// 15min: 15 分钟
+// 30min: 30 分钟
+// 1day: 1 日
+// 3day: 3 日
+// 1week: 1 周
+// 1hour: 1 小时
+// 2hour: 2 小时
+// 4hour: 4 小时
+// 6hour: 6小时
+// 12hour: 12 小时
+// since: 从这个时间戳之后的
+// size: 返回数据的条数限制(默认为 1000, 如果返回数据多于 1000 条, 那么只返回 1000 条)
+func (cb *CHBTC) GetKline(base string, quote string, typ string, since int, size int) (*model.Kline, error) {
+	url := MarketAPI + "kline?currency=" + quote + "_" + base
+
+	if len(typ) != 0 {
+		url += "&type=" + typ
+	}
+
+	if since != 0 {
+		url += "&since=" + strconv.Itoa(since)
+	}
+
+	if size != 0 {
+		url += "&size=" + strconv.Itoa(size)
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	kline := new(model.Kline)
+
+	kline.MoneyType = gjson.GetBytes(body, "moneyType").String()
+	kline.Symbol = gjson.GetBytes(body, "symbol").String()
+
+	gjson.GetBytes(body, "data").ForEach(func(k, v gjson.Result) bool {
+		klinedata := &model.KlineData{
+			Time:   time.Unix(v.Array()[0].Int()/1000, 0),
+			Open:   v.Array()[1].Float(),
+			High:   v.Array()[2].Float(),
+			Low:    v.Array()[3].Float(),
+			Close:  v.Array()[4].Float(),
+			Amount: v.Array()[5].Float(),
+		}
+
+		kline.Data = append(kline.Data, klinedata)
+		return true
+	})
+
+	return kline, nil
+}
