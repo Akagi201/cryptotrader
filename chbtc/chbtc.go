@@ -100,13 +100,13 @@ func (cb *CHBTC) GetTicker(base string, quote string) (*model.Ticker, error) {
 }
 
 // GetOrderBook 市场深度
-// size: 档位 1-50, 如果有合并深度, 只能返回 5 档深度
-// merge:
-// btc_cny: 可选 1, 0.1
-// ltc_cny: 可选 0.5, 0.3, 0.1
-// eth_cny: 可选 0.5, 0.3, 0.1
-// etc_cny: 可选 0.3, 0.1
-// bts_cny: 可选 1, 0.1
+// * size: 档位 1-50, 如果有合并深度, 只能返回 5 档深度
+// * merge:
+//   * btc_cny: 可选 1, 0.1
+//   * ltc_cny: 可选 0.5, 0.3, 0.1
+//   * eth_cny: 可选 0.5, 0.3, 0.1
+//   * etc_cny: 可选 0.3, 0.1
+//   * bts_cny: 可选 1, 0.1
 func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64) (*model.OrderBook, error) {
 	url := MarketAPI + "depth?currency=" + quote + "_" + base + "&size=" + strconv.Itoa(size) + "&merge=" + strconv.FormatFloat(merge, 'f', -1, 64)
 
@@ -152,13 +152,13 @@ func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64
 }
 
 // GetTrades 获取历史成交
-// currency: quote_base
-// btc_cny: 比特币/人民币
-// ltc_cny: 莱特币/人民币
-// eth_cny: 以太币/人民币
-// etc_cny: ETC币/人民币
-// bts_cny: BTS币/人民币
-// since: 从指定交易 ID 后 50 条数据
+// * currency: quote_base
+//   * btc_cny: 比特币/人民币
+//   * ltc_cny: 莱特币/人民币
+//   * eth_cny: 以太币/人民币
+//   * etc_cny: ETC币/人民币
+//   * bts_cny: BTS币/人民币
+// * since: 从指定交易 ID 后 50 条数据
 func (cb *CHBTC) GetTrades(base string, quote string, since int) (*model.Trades, error) {
 	url := MarketAPI + "trades?currency=" + quote + "_" + base
 	if since != 0 {
@@ -196,28 +196,28 @@ func (cb *CHBTC) GetTrades(base string, quote string, since int) (*model.Trades,
 }
 
 // GetKline 获取 K 线数据
-// currency: quote_base
-// btc_cny: 比特币/人民币
-// ltc_cny: 莱特币/人民币
-// eth_cny: 以太币/人民币
-// etc_cny: ETC币/人民币
-// bts_cny: BTS币/人民币
-// typ:
-// 1min: 1 分钟
-// 3min: 3 分钟
-// 5min: 5 分钟
-// 15min: 15 分钟
-// 30min: 30 分钟
-// 1day: 1 日
-// 3day: 3 日
-// 1week: 1 周
-// 1hour: 1 小时
-// 2hour: 2 小时
-// 4hour: 4 小时
-// 6hour: 6小时
-// 12hour: 12 小时
-// since: 从这个时间戳之后的
-// size: 返回数据的条数限制(默认为 1000, 如果返回数据多于 1000 条, 那么只返回 1000 条)
+// * currency: quote_base
+//   * btc_cny: 比特币/人民币
+//   * ltc_cny: 莱特币/人民币
+//   * eth_cny: 以太币/人民币
+//   * etc_cny: ETC币/人民币
+//   * bts_cny: BTS币/人民币
+// * typ:
+//   * 1min: 1 分钟
+//   * 3min: 3 分钟
+//   * 5min: 5 分钟
+//   * 15min: 15 分钟
+//   * 30min: 30 分钟
+//   * 1day: 1 日
+//   * 3day: 3 日
+//   * 1week: 1 周
+//   * 1hour: 1 小时
+//   * 2hour: 2 小时
+//   * 4hour: 4 小时
+//   * 6hour: 6小时
+//   * 12hour: 12 小时
+// * since: 从这个时间戳之后的
+// * size: 返回数据的条数限制(默认为 1000, 如果返回数据多于 1000 条, 那么只返回 1000 条)
 func (cb *CHBTC) GetKline(base string, quote string, typ string, since int, size int) (*model.Kline, error) {
 	url := MarketAPI + "kline?currency=" + quote + "_" + base
 
@@ -283,11 +283,11 @@ func (cb *CHBTC) Sign(uri string) string {
 }
 
 // GetUserAddress 获取用户充值地址
-// currency:
-// btc: BTC
-// ltc: LTC
-// eth: 以太币
-// etc: ETC币
+// * currency:
+//   * btc: BTC
+//   * ltc: LTC
+//   * eth: 以太币
+//   * etc: ETC币
 func (cb *CHBTC) GetUserAddress(currency string) (string, error) {
 	url := "method=getUserAddress"
 	url += "&accesskey=" + cb.AccessKey
