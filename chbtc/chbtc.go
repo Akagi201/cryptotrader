@@ -100,6 +100,7 @@ func (cb *CHBTC) GetTicker(base string, quote string) (*model.Ticker, error) {
 }
 
 // GetOrderBook 市场深度
+//
 // * size: 档位 1-50, 如果有合并深度, 只能返回 5 档深度
 // * merge:
 //   * btc_cny: 可选 1, 0.1
@@ -152,6 +153,7 @@ func (cb *CHBTC) GetOrderBook(base string, quote string, size int, merge float64
 }
 
 // GetTrades 获取历史成交
+//
 // * currency: quote_base
 //   * btc_cny: 比特币/人民币
 //   * ltc_cny: 莱特币/人民币
@@ -196,6 +198,7 @@ func (cb *CHBTC) GetTrades(base string, quote string, since int) (*model.Trades,
 }
 
 // GetKline 获取 K 线数据
+//
 // * currency: quote_base
 //   * btc_cny: 比特币/人民币
 //   * ltc_cny: 莱特币/人民币
@@ -283,6 +286,7 @@ func (cb *CHBTC) Sign(uri string) string {
 }
 
 // GetUserAddress 获取用户充值地址
+//
 // * currency:
 //   * btc: BTC
 //   * ltc: LTC
