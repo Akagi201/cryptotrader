@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	api := chbtc.New("", "")
+	api := chbtc.New("c390fceb-cee2-44bd-980a-0662aed39142", "dfffc1e0-bab1-46ca-a947-49d814154836")
 
 	ticker, err := api.GetTicker("cny", "eth")
 	if err != nil {
@@ -39,4 +39,11 @@ func main() {
 
 	klineStr := spew.Sdump(kline)
 	log.Infof("Get kline: %v", klineStr)
+
+	ethAddr, err := api.GetUserAddress("eth")
+	if err != nil {
+		log.Errorf("Get UserAddress failed, err: %v", err)
+	}
+
+	log.Infof("Get eth addr: %v", ethAddr)
 }

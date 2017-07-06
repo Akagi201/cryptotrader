@@ -2,6 +2,10 @@
 package chbtc
 
 import (
+	"crypto/hmac"
+	"crypto/md5"
+	"crypto/sha1"
+	"encoding/hex"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -267,4 +271,52 @@ func (cb *CHBTC) GetKline(base string, quote string, typ string, since int, size
 	})
 
 	return kline, nil
+}
+
+// SecretDigest calc secert digest
+func (cb *CHBTC) SecretDigest() string {
+	sha := sha1.New()
+	sha.Write([]byte(cb.SecretKey))
+	return hex.EncodeToString(sha.Sum(nil))
+}
+
+// Sign calc sign string
+func (cb *CHBTC) Sign(uri string) string {
+	digest := cb.SecretDigest()
+	mac := hmac.New(md5.New, []byte(digest))
+	mac.Write([]byte(uri))
+	return hex.EncodeToString(mac.Sum(nil))
+}
+
+// GetUserAddress 获取用户充值地址
+// currency:
+// btc: BTC
+// ltc: LTC
+// eth: 以太币
+// etc: ETC币
+func (cb *CHBTC) GetUserAddress(currency string) (string, error) {
+	url := "method=getUserAddress"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&currency=" + currency
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getUserAddress?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	return gjson.GetBytes(body, "message.datas.key").String(), nil
 }
