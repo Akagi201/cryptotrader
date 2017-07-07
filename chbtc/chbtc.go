@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"time"
 
+	"errors"
+
 	"github.com/Akagi201/cryptotrader/model"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -303,6 +305,367 @@ func (cb *CHBTC) GetUserAddress(currency string) (string, error) {
 	log.Debugf("Request url: %v", url)
 
 	url = TradeAPI + "getUserAddress?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	return gjson.GetBytes(body, "message.datas.key").String(), nil
+}
+
+// PlaceOrder 委托下单
+//
+// * price: 单价(cny 保留小数后 2 位, btc 保留小数后 6 位)
+// * amount: 交易数量(btc, ltc, eth, etc保留小数后 3 位)
+// * tradeType: 交易类型 1/0[buy / sell]
+// * currency: quote_base
+//   * btc_cny: 比特币/人民币
+//   * ltc_cny: 莱特币/人民币
+//   * eth_cny: 以太币/人民币
+//   * etc_cny: ETC币/人民币
+//   * bts_cny: BTS币/人民币
+// return 委托挂单号
+func (cb *CHBTC) PlaceOrder(price float64, amount float64, tradeType int, base string, quote string) (string, error) {
+	url := "method=order"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&price=" + strconv.FormatFloat(price, 'f', -1, 64)
+	url += "&amount=" + strconv.FormatFloat(amount, 'f', -1, 64)
+	url += "&tradeType=" + strconv.Itoa(tradeType)
+	url += "&currency=" + quote + "_" + base
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "order?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+	code := gjson.GetBytes(body, "code").String()
+	if code == "1000" {
+		return gjson.GetBytes(body, "id").String(), nil
+	}
+
+	return "", errors.New(code)
+}
+
+// CancelOrder 取消委托
+//
+// * id: 委托挂单号
+// * currency: quote_base
+//   * btc_cny: 比特币/人民币
+//   * ltc_cny: 莱特币/人民币
+//   * eth_cny: 以太币/人民币
+//   * etc_cny: ETC币/人民币
+//   * bts_cny: BTS币/人民币
+func (cb *CHBTC) CancelOrder(id string, base string, quote string) error {
+	url := "method=cancelOrder"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&id=" + id
+	url += "&currency=" + quote + "_" + base
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "cancelOrder?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	code := gjson.GetBytes(body, "code").String()
+	if code == "1000" {
+		return nil
+	}
+
+	return errors.New(code)
+}
+
+// GetOrder 获取委托买单或卖单
+// id: 委托挂单号
+func (cb *CHBTC) GetOrder(id string, base string, quote string) (*model.CHBTCOrder, error) {
+	url := "method=getOrder"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&id=" + id
+	url += "&currency=" + quote + "_" + base
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getOrder?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	return &model.CHBTCOrder{
+		Currency:    gjson.GetBytes(body, "currency").String(),
+		Fees:        gjson.GetBytes(body, "fees").Float(),
+		ID:          gjson.GetBytes(body, "id").String(),
+		Price:       gjson.GetBytes(body, "price").Float(),
+		Status:      gjson.GetBytes(body, "status").Int(),
+		TotalAmount: gjson.GetBytes(body, "total_amount").Float(),
+		TradeAmount: gjson.GetBytes(body, "trade_amount").Float(),
+		TradePrice:  gjson.GetBytes(body, "trade_price").Float(),
+		TradeDate:   time.Unix(gjson.GetBytes(body, "trade_date").Int(), 0),
+		TradeMoney:  gjson.GetBytes(body, "trade_money").Float(),
+		Type:        gjson.GetBytes(body, "type").Int(),
+	}, nil
+}
+
+// GetOrders 获取多个委托买单或卖单, 每次请求返回 10 条记录
+func (cb *CHBTC) GetOrders(tradeType int, base string, quote string, pageIndex int) ([]*model.CHBTCOrder, error) {
+	url := "method=getOrders"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&tradeType=" + strconv.Itoa(tradeType)
+	url += "&currency=" + quote + "_" + base
+	url += "&pageIndex=" + strconv.Itoa(pageIndex)
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getOrders?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var orders []*model.CHBTCOrder
+	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
+		orders = append(orders, &model.CHBTCOrder{
+			Currency:    v.Get("currency").String(),
+			Fees:        v.Get("fees").Float(),
+			ID:          v.Get("id").String(),
+			Price:       v.Get("price").Float(),
+			Status:      v.Get("status").Int(),
+			TotalAmount: v.Get("total_amount").Float(),
+			TradeAmount: v.Get("trade_amount").Float(),
+			TradePrice:  v.Get("trade_price").Float(),
+			TradeDate:   time.Unix(v.Get("trade_date").Int(), 0),
+			TradeMoney:  v.Get("trade_money").Float(),
+			Type:        v.Get("type").Int(),
+		})
+
+		return true
+	})
+
+	return orders, nil
+}
+
+// GetOrdersNew (新)获取多个委托买单或卖单，每次请求返回pageSize<100条记录
+func (cb *CHBTC) GetOrdersNew(tradeType int, base string, quote string, pageIndex int, pageSize int) ([]*model.CHBTCOrder, error) {
+	url := "method=getOrdersNew"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&tradeType=" + strconv.Itoa(tradeType)
+	url += "&currency=" + quote + "_" + base
+	url += "&pageIndex=" + strconv.Itoa(pageIndex)
+	url += "&pageSize=" + strconv.Itoa(pageSize)
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getOrdersNew?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var orders []*model.CHBTCOrder
+	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
+		orders = append(orders, &model.CHBTCOrder{
+			Currency:    v.Get("currency").String(),
+			Fees:        v.Get("fees").Float(),
+			ID:          v.Get("id").String(),
+			Price:       v.Get("price").Float(),
+			Status:      v.Get("status").Int(),
+			TotalAmount: v.Get("total_amount").Float(),
+			TradeAmount: v.Get("trade_amount").Float(),
+			TradePrice:  v.Get("trade_price").Float(),
+			TradeDate:   time.Unix(v.Get("trade_date").Int(), 0),
+			TradeMoney:  v.Get("trade_money").Float(),
+			Type:        v.Get("type").Int(),
+		})
+
+		return true
+	})
+
+	return orders, nil
+}
+
+// GetOrdersIgnoreTradeType 与getOrdersNew的区别是取消tradeType字段过滤，可同时获取买单和卖单，每次请求返回pageSize<100条记录
+func (cb *CHBTC) GetOrdersIgnoreTradeType(base string, quote string, pageIndex int, pageSize int) ([]*model.CHBTCOrder, error) {
+	url := "method=getOrdersIgnoreTradeType"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&currency=" + quote + "_" + base
+	url += "&pageIndex=" + strconv.Itoa(pageIndex)
+	url += "&pageSize=" + strconv.Itoa(pageSize)
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getOrdersIgnoreTradeType?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var orders []*model.CHBTCOrder
+	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
+		orders = append(orders, &model.CHBTCOrder{
+			Currency:    v.Get("currency").String(),
+			Fees:        v.Get("fees").Float(),
+			ID:          v.Get("id").String(),
+			Price:       v.Get("price").Float(),
+			Status:      v.Get("status").Int(),
+			TotalAmount: v.Get("total_amount").Float(),
+			TradeAmount: v.Get("trade_amount").Float(),
+			TradePrice:  v.Get("trade_price").Float(),
+			TradeDate:   time.Unix(v.Get("trade_date").Int(), 0),
+			TradeMoney:  v.Get("trade_money").Float(),
+			Type:        v.Get("type").Int(),
+		})
+
+		return true
+	})
+
+	return orders, nil
+}
+
+// GetUnfinishedOrdersIgnoreTradeType 获取未成交或部份成交的买单和卖单，每次请求返回pageSize<=100条记录
+func (cb *CHBTC) GetUnfinishedOrdersIgnoreTradeType(base string, quote string, pageIndex int, pageSize int) ([]*model.CHBTCOrder, error) {
+	url := "method=getUnfinishedOrdersIgnoreTradeType"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&currency=" + quote + "_" + base
+	url += "&pageIndex=" + strconv.Itoa(pageIndex)
+	url += "&pageSize=" + strconv.Itoa(pageSize)
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getUnfinishedOrdersIgnoreTradeType?" + url
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var orders []*model.CHBTCOrder
+	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
+		orders = append(orders, &model.CHBTCOrder{
+			Currency:    v.Get("currency").String(),
+			Fees:        v.Get("fees").Float(),
+			ID:          v.Get("id").String(),
+			Price:       v.Get("price").Float(),
+			Status:      v.Get("status").Int(),
+			TotalAmount: v.Get("total_amount").Float(),
+			TradeAmount: v.Get("trade_amount").Float(),
+			TradePrice:  v.Get("trade_price").Float(),
+			TradeDate:   time.Unix(v.Get("trade_date").Int(), 0),
+			TradeMoney:  v.Get("trade_money").Float(),
+			Type:        v.Get("type").Int(),
+		})
+
+		return true
+	})
+
+	return orders, nil
+}
+
+// GetWithdrawAddress 获取用户认证的提现地址
+//
+// * currency:
+//   * btc: BTC
+//   * ltc: LTC
+//   * eth: 以太币
+//   * etc: ETC币
+func (cb *CHBTC) GetWithdrawAddress(currency string) (string, error) {
+	url := "method=getWithdrawAddress"
+	url += "&accesskey=" + cb.AccessKey
+	url += "&currency=" + currency
+	sign := cb.Sign(url)
+	url += "&sign=" + sign
+	url += "&reqTime=" + strconv.FormatInt(time.Now().UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond)), 10)
+
+	log.Debugf("Request url: %v", url)
+
+	url = TradeAPI + "getWithdrawAddress?" + url
 
 	resp, err := http.Get(url)
 	if err != nil {
