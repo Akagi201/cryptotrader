@@ -101,12 +101,12 @@ func main() {
 
 		if btcTicker.Last > 19000 {
 			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC High: %v", sntTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC High: %v", btcTicker.Last), channel.ID))
 		}
 
 		if btcTicker.Last < 18000 {
 			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", sntTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", btcTicker.Last), channel.ID))
 		}
 
 		time.Sleep(5 * time.Second)
