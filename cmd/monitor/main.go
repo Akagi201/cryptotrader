@@ -47,6 +47,19 @@ func main() {
 	}()
 
 	api := yunbi.New("", "")
+
+	go func() {
+		for {
+			ticker, err := api.GetTicker("cny", "snt")
+			if err != nil {
+				log.Errorf("Get ticker failed, err: %v", err)
+			}
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("Current Price: %v", ticker.Last), channel.ID))
+			time.Sleep(10 * time.Minute)
+		}
+	}()
+
 	for {
 		ticker, err := api.GetTicker("cny", "snt")
 		if err != nil {
