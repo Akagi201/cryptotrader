@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Akagi201/cryptotrader/chbtc"
+	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
@@ -51,10 +52,21 @@ func main() {
 		log.Infof("Get eth addr: %v", ethAddr)
 	}
 
-	{
+	if false {
 		// yunbi
 		api := yunbi.New("", "")
 		ticker, err := api.GetTicker("cny", "snt")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// viabtc
+		api := viabtc.New("", "")
+		ticker, err := api.GetTicker("cny", "bcc")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
