@@ -6,12 +6,11 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
-
-	"errors"
 
 	"github.com/Akagi201/cryptotrader/model"
 	log "github.com/sirupsen/logrus"
