@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/Akagi201/cryptotrader/viabtc"
@@ -47,6 +48,13 @@ func main() {
 		}
 	}()
 
+	go func() {
+		for {
+			time.Sleep(30 * time.Minute)
+			os.Exit(0)
+		}
+	}()
+
 	yunbiApi := yunbi.New("", "")
 	viabtcApi := viabtc.New("", "")
 
@@ -55,6 +63,10 @@ func main() {
 			sntTicker, err := yunbiApi.GetTicker("cny", "snt")
 			if err != nil {
 				log.Errorf("Get SNT ticker failed, err: %v", err)
+			}
+			ethTicker, err := yunbiApi.GetTicker("cny", "eth")
+			if err != nil {
+				log.Errorf("Get ETH ticker failed, err: %v", err)
 			}
 
 			btcTicker, err := viabtcApi.GetTicker("cny", "btc")
@@ -69,6 +81,7 @@ func main() {
 
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT Current: %v", sntTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Current: %v", ethTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BCC Current: %v", bccTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Current: %v", btcTicker.Last), channel.ID))
 			time.Sleep(10 * time.Minute)
@@ -82,14 +95,30 @@ func main() {
 		}
 
 		log.Infof("SNT Latest: %+v", sntTicker.Last)
-		if sntTicker.Last > 0.6 {
+		if sntTicker.Last > 0.4 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT High: %v", sntTicker.Last), channel.ID))
 		}
 
-		if sntTicker.Last < 0.55 {
+		if sntTicker.Last < 0.35 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT Low: %v", sntTicker.Last), channel.ID))
+		}
+
+		ethTicker, err := yunbiApi.GetTicker("cny", "eth")
+		if err != nil {
+			log.Error("Get ETH ticker failed, err: %v", err)
+		}
+
+		log.Infof("ETH latest: %+v", ethTicker.Last)
+		if ethTicker.Last > 1350 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH High: %v", ethTicker.Last), channel.ID))
+		}
+
+		if ethTicker.Last < 1300 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Low: %v", ethTicker.Last), channel.ID))
 		}
 
 		btcTicker, err := viabtcApi.GetTicker("cny", "btc")
@@ -99,12 +128,12 @@ func main() {
 
 		log.Infof("BTC Latest: %+v", btcTicker.Last)
 
-		if btcTicker.Last > 19000 {
+		if btcTicker.Last > 17000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC High: %v", btcTicker.Last), channel.ID))
 		}
 
-		if btcTicker.Last < 18000 {
+		if btcTicker.Last < 16800 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", btcTicker.Last), channel.ID))
 		}
