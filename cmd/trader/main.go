@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Akagi201/cryptotrader/binance"
 	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/viabtc"
@@ -75,7 +76,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// huobi
 		api := huobi.New("", "")
 		ticker, err := api.GetTicker("cny", "eth")
@@ -86,4 +87,14 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
+	{
+		// binance
+		api := binance.New("", "")
+		ticker, err := api.GetTicker("btc", "eth")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
 }
