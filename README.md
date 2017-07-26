@@ -7,6 +7,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] yunbi
 - [x] viabtc
 - [x] huobi
+- [x] binance
 
 ## utils
 - [x] trader: API test.
