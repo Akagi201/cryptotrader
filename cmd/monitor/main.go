@@ -7,6 +7,7 @@ import (
 
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
+	mapset "github.com/deckarep/golang-set"
 	"github.com/nlopes/slack"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,6 +19,14 @@ func FindChannelByName(rtm *slack.RTM, name string) *slack.Channel {
 		}
 	}
 	return nil
+}
+
+func stringToInterfaceSlice(s []string) []interface{} {
+	new := make([]interface{}, len(s))
+	for i, v := range s {
+		new[i] = v
+	}
+	return new
 }
 
 func main() {
@@ -32,6 +41,7 @@ func main() {
 		for msg := range rtm.IncomingEvents {
 			switch ev := msg.Data.(type) {
 			case *slack.ConnectedEvent:
+				_ = ev
 				//log.Infof("Infos Channels: %+v", ev.Info.Channels[0].Name)
 				//log.Infof("res: id %v, name %v", ev.Info.Channels[0].groupConversation.conversation.ID,
 				//	ev.Info.Channels[0].groupConversation.Name)
@@ -87,6 +97,34 @@ func main() {
 		}
 	}()
 
+	var oldTickerList []string
+	var newTickerList []string
+	var err error
+	oldTickerList, err = yunbiApi.GetTickerList()
+	if err != nil {
+		log.Fatalf("Yunbi get ticker list failed, err: %v", err)
+	}
+	newTickerList, err = yunbiApi.GetTickerList()
+	if err != nil {
+		log.Fatalf("Yunbi get ticker list failed, err: %v", err)
+	}
+
+	go func() {
+		for {
+			newTickerList, err = yunbiApi.GetTickerList()
+			newListInterface := stringToInterfaceSlice(newTickerList)
+			oldListInterface := stringToInterfaceSlice(oldTickerList)
+			newSet := mapset.NewSetFromSlice(newListInterface)
+			oldSet := mapset.NewSetFromSlice(oldListInterface)
+			if len(newSet.Difference(oldSet).ToSlice()) > 0 {
+				channel := FindChannelByName(rtm, "devops")
+				rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("Yunbi Got New Coin: %v", newSet.Difference(oldSet).ToSlice()), channel.ID))
+			}
+			//oldTickerList = newTickerList
+			time.Sleep(30 * time.Minute)
+		}
+	}()
+
 	for {
 		sntTicker, err := yunbiApi.GetTicker("cny", "snt")
 		if err != nil {
@@ -110,12 +148,12 @@ func main() {
 		}
 
 		log.Infof("ETH latest: %+v", ethTicker.Last)
-		if ethTicker.Last > 1350 {
+		if ethTicker.Last > 1400 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH High: %v", ethTicker.Last), channel.ID))
 		}
 
-		if ethTicker.Last < 1300 {
+		if ethTicker.Last < 1350 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Low: %v", ethTicker.Last), channel.ID))
 		}
@@ -127,12 +165,12 @@ func main() {
 
 		log.Infof("BTC Latest: %+v", btcTicker.Last)
 
-		if btcTicker.Last > 17000 {
+		if btcTicker.Last > 19000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC High: %v", btcTicker.Last), channel.ID))
 		}
 
-		if btcTicker.Last < 16800 {
+		if btcTicker.Last < 17000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", btcTicker.Last), channel.ID))
 		}
