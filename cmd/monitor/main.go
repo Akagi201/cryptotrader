@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
 	mapset "github.com/deckarep/golang-set"
@@ -66,6 +67,7 @@ func main() {
 
 	yunbiApi := yunbi.New("", "")
 	viabtcApi := viabtc.New("", "")
+	btc9Api := btc9.New("", "")
 
 	go func() {
 		for {
@@ -88,11 +90,24 @@ func main() {
 				log.Errorf("Get BCC ticker failed, err: %v", err)
 			}
 
+			omgTicker, err := btc9Api.GetTicker("cny", "omg")
+			if err != nil {
+				log.Errorf("Get OMG ticker failed, err: %v", err)
+			}
+
+			payTicker, err := btc9Api.GetTicker("cny", "pay")
+			if err != nil {
+				log.Errorf("Get PAY ticker failed, err: %v", err)
+			}
+
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT Current: %v", sntTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Current: %v", ethTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BCC Current: %v", bccTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Current: %v", btcTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG Current: %v", omgTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY Current: %v", payTicker.Last), channel.ID))
+
 			time.Sleep(30 * time.Minute)
 		}
 	}()
@@ -173,6 +188,40 @@ func main() {
 		if btcTicker.Last < 17000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", btcTicker.Last), channel.ID))
+		}
+
+		omgTicker, err := btc9Api.GetTicker("cny", "omg")
+		if err != nil {
+			log.Error("Get OMG ticker failed, err: %v", err)
+		}
+
+		log.Infof("OMG Latest: %+v", omgTicker.Last)
+
+		if omgTicker.Last > 10 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG High: %v", omgTicker.Last), channel.ID))
+		}
+
+		if omgTicker.Last < 8 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG Low: %v", omgTicker.Last), channel.ID))
+		}
+
+		payTicker, err := btc9Api.GetTicker("cny", "pay")
+		if err != nil {
+			log.Error("Get PAY ticker failed, err: %v", err)
+		}
+
+		log.Infof("PAY Latest: %+v", payTicker.Last)
+
+		if payTicker.Last > 6.5 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY High: %v", payTicker.Last), channel.ID))
+		}
+
+		if payTicker.Last < 6 {
+			channel := FindChannelByName(rtm, "devops")
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY Low: %v", payTicker.Last), channel.ID))
 		}
 
 		time.Sleep(5 * time.Second)
