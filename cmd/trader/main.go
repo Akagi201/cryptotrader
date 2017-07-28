@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Akagi201/cryptotrader/binance"
+	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/viabtc"
@@ -54,7 +55,7 @@ func main() {
 		log.Infof("Get eth addr: %v", ethAddr)
 	}
 
-	{
+	if false {
 		// yunbi
 		api := yunbi.New("", "")
 		ticker, err := api.GetTicker("cny", "snt")
@@ -104,4 +105,23 @@ func main() {
 
 		log.Infof("Get ticker: %+v", ticker)
 	}
+
+	{
+		// btc9
+		api := btc9.New("", "")
+		omgTicker, err := api.GetTicker("cny", "omg")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get OMG ticker: %+v", omgTicker)
+
+		payTicker, err := api.GetTicker("cny", "pay")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get PAY ticker: %+v", payTicker)
+	}
+
 }
