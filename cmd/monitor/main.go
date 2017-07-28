@@ -7,7 +7,6 @@ import (
 
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/nlopes/slack"
 	log "github.com/sirupsen/logrus"
 )
@@ -36,8 +35,8 @@ func main() {
 				//log.Infof("Infos Channels: %+v", ev.Info.Channels[0].Name)
 				//log.Infof("res: id %v, name %v", ev.Info.Channels[0].groupConversation.conversation.ID,
 				//	ev.Info.Channels[0].groupConversation.Name)
-				channelStr := spew.Sdump(ev.Info.Channels)
-				log.Infof("channels: %v", channelStr)
+				//channelStr := spew.Sdump(ev.Info.Channels)
+				//log.Infof("channels: %v", channelStr)
 				log.Infof("slack connected")
 				return
 			case *slack.InvalidAuthEvent:
@@ -50,7 +49,7 @@ func main() {
 
 	go func() {
 		for {
-			time.Sleep(30 * time.Minute)
+			time.Sleep(35 * time.Minute)
 			os.Exit(0)
 		}
 	}()
@@ -84,7 +83,7 @@ func main() {
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Current: %v", ethTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BCC Current: %v", bccTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Current: %v", btcTicker.Last), channel.ID))
-			time.Sleep(10 * time.Minute)
+			time.Sleep(30 * time.Minute)
 		}
 	}()
 

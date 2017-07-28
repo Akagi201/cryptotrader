@@ -54,7 +54,7 @@ func main() {
 		log.Infof("Get eth addr: %v", ethAddr)
 	}
 
-	if false {
+	{
 		// yunbi
 		api := yunbi.New("", "")
 		ticker, err := api.GetTicker("cny", "snt")
@@ -63,6 +63,13 @@ func main() {
 		}
 
 		log.Infof("Get ticker: %+v", ticker)
+
+		tickerList, err := api.GetTickerList()
+		if err != nil {
+			log.Errorf("Get tickerList failed, err: %v", err)
+		}
+
+		log.Infof("Get tickerList: %v", tickerList)
 	}
 
 	if false {
@@ -87,7 +94,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// binance
 		api := binance.New("", "")
 		ticker, err := api.GetTicker("btc", "eth")

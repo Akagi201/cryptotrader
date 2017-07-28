@@ -93,3 +93,30 @@ func (yb *Yunbi) GetTicker(base string, quote string) (*model.Ticker, error) {
 		Vol:  vol,
 	}, nil
 }
+
+// GetTickerList 获取当前支持币种列表
+func (yb *Yunbi) GetTickerList() ([]string, error) {
+	url := API + "tickers.json"
+
+	log.Debugf("Request url: %v", url)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var tickerList []string
+	gjson.ParseBytes(body).ForEach(func(key, value gjson.Result) bool {
+		tickerList = append(tickerList, key.String())
+		return true
+	})
+
+	return tickerList, nil
+}
