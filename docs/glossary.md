@@ -65,5 +65,10 @@
 ## 平仓
 * 系统默认平仓价为对手价, 平仓为持仓金额. 用户可自己选择输入平仓价格和平仓金额.
 
+## HD Wallet
+* HD 全称是 Hierarchical Deterministic.
+* HD Wallet 使用一个 master seed, 来顺序的生成后续的一系列钱包地址.
+* Refs: <http://support.mycelium.com/hc/en-us/articles/207045475-What-does-HD-in-HD-Wallet-mean->
+
 ## Refs
 * [MBAlib](http://wiki.mbalib.com/wiki/)
