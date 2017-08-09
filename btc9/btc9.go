@@ -31,7 +31,14 @@ func New(accessKey string, secretKey string) *Btc9 {
 }
 
 // GetTicker 行情
-func (bt *Btc9) GetTicker(base string, quote string) (*model.Ticker, error) {
+func (bt *Btc9) GetTicker(base string, quote string) (ticker *model.Ticker, rerr error) {
+	defer func() {
+		if err := recover(); err != nil {
+			ticker = nil
+			rerr = err.(error)
+		}
+	}()
+
 	var url string
 	if quote == "pay" {
 		url = API + "/trade_43.js?v=" + strconv.FormatFloat(rand.Float64(), 'g', 1, 64)
