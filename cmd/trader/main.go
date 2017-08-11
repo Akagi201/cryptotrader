@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Akagi201/cryptotrader/binance"
+	"github.com/Akagi201/cryptotrader/bittrex"
 	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/huobi"
@@ -125,7 +126,7 @@ func main() {
 		log.Infof("Get PAY ticker: %+v", payTicker)
 	}
 
-	{
+	if false {
 		// okcoin
 		api := okcoin.New("", "")
 
@@ -136,6 +137,18 @@ func main() {
 
 		log.Infof("Get ticker: %+v", ticker)
 
+	}
+
+	{
+		// bittrex
+		api := bittrex.New("", "")
+
+		ticker, err := api.GetTicker("eth", "storj")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
 	}
 
 }
