@@ -6,6 +6,7 @@ import (
 	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/etherscan"
+	"github.com/Akagi201/cryptotrader/fixer"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
@@ -165,7 +166,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// etherscan
 		api := etherscan.New("")
 
@@ -174,7 +175,7 @@ func main() {
 			log.Errorf("Get balance failed, err: %v", err)
 		}
 
-		log.Infof("Get balance: %+v", balance)
+		log.Infof("Get balance: %v", balance)
 
 		block, err := api.GetBlockNumber()
 
@@ -182,7 +183,19 @@ func main() {
 			log.Errorf("Get block number failed, err: %v", err)
 		}
 
-		log.Infof("Get block number: %+v", block)
+		log.Infof("Get block number: %v", block)
+	}
+
+	{
+		// fixer
+		api := fixer.New()
+
+		rate, err := api.GetRate("USD", "CNY")
+		if err != nil {
+			log.Errorf("Get rate failed, err: %v", err)
+		}
+
+		log.Infof("Get rate: %v", rate)
 	}
 
 }

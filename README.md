@@ -16,6 +16,9 @@ A cryptocurrency trader for all famous exchanges.
 ## Data API
 - [x] etherscan
 
+## Forex
+- [x] fixer.io
+
 ## utils
 - [x] trader: API test.
 - [x] monitor: Monitor market price and alter.
