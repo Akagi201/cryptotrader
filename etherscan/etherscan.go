@@ -9,6 +9,7 @@ import (
 	"github.com/Akagi201/cryptotrader/util"
 	"github.com/ethereum/go-ethereum/common/math"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
 )
 
@@ -51,4 +52,26 @@ func (es *EtherScan) GetBalance(addr string) (*big.Float, error) {
 	balanceInEther := util.WeiToEther(balanceInWei)
 
 	return balanceInEther, nil
+}
+
+func (es *EtherScan) GetBlockNumber() (int64, error) {
+	url := API + "?module=proxy&action=eth_blockNumber&apikey=" + es.ApiKey
+
+	log.Debugf("Request url: %v", url)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	blockInString := gjson.GetBytes(body, "result").String()
+
+	return cast.ToInt64(blockInString), nil
 }

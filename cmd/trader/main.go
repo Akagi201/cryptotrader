@@ -175,6 +175,14 @@ func main() {
 		}
 
 		log.Infof("Get balance: %+v", balance)
+
+		block, err := api.GetBlockNumber()
+
+		if err != nil {
+			log.Errorf("Get block number failed, err: %v", err)
+		}
+
+		log.Infof("Get block number: %+v", block)
 	}
 
 }
