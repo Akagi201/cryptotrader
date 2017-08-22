@@ -6,6 +6,7 @@ import (
 	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/huobi"
+	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
@@ -139,11 +140,23 @@ func main() {
 
 	}
 
-	{
+	if false {
 		// bittrex
 		api := bittrex.New("", "")
 
 		ticker, err := api.GetTicker("eth", "storj")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// liqui
+		api := liqui.New("", "")
+
+		ticker, err := api.GetTicker("eth", "zrx")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}

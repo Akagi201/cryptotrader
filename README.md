@@ -10,6 +10,8 @@ A cryptocurrency trader for all famous exchanges.
 - [x] binance
 - [x] btc9
 - [x] okcoin
+- [x] bittrex
+- [x] liqui
 
 ## utils
 - [x] trader: API test.
