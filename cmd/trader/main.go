@@ -5,6 +5,7 @@ import (
 	"github.com/Akagi201/cryptotrader/bittrex"
 	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
+	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
@@ -152,7 +153,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// liqui
 		api := liqui.New("", "")
 
@@ -162,6 +163,18 @@ func main() {
 		}
 
 		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// etherscan
+		api := etherscan.New("")
+
+		balance, err := api.GetBalance("0x258ce53268BEaA9BA97fA6b7790d7555ae4044fc")
+		if err != nil {
+			log.Errorf("Get balance failed, err: %v", err)
+		}
+
+		log.Infof("Get balance: %+v", balance)
 	}
 
 }

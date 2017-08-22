@@ -13,6 +13,9 @@ A cryptocurrency trader for all famous exchanges.
 - [x] bittrex
 - [x] liqui
 
+## Data API
+- [x] etherscan
+
 ## utils
 - [x] trader: API test.
 - [x] monitor: Monitor market price and alter.
