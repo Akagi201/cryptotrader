@@ -10,6 +10,7 @@ import (
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
+	"github.com/Akagi201/cryptotrader/poloniex"
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
 	"github.com/davecgh/go-spew/spew"
@@ -103,7 +104,7 @@ func main() {
 	if false {
 		// binance
 		api := binance.New("", "")
-		ticker, err := api.GetTicker("btc", "eth")
+		ticker, err := api.GetTicker("eth", "dnt")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -186,7 +187,7 @@ func main() {
 		log.Infof("Get block number: %v", block)
 	}
 
-	{
+	if false {
 		// fixer
 		api := fixer.New()
 
@@ -196,6 +197,18 @@ func main() {
 		}
 
 		log.Infof("Get rate: %v", rate)
+	}
+
+	{
+		// poloniex
+		api := poloniex.New("", "")
+
+		ticker, err := api.GetTicker("btc", "eth")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
 	}
 
 }

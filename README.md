@@ -12,6 +12,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] okcoin
 - [x] bittrex
 - [x] liqui
+- [x] poloniex
 
 ## Data API
 - [x] etherscan
