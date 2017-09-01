@@ -1,0 +1,4 @@
+base="cny"
+quote="eth"
+exchanges=["yunbi", "huobi", "okcoin", "chbtc"]
+slack-key=""

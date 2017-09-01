@@ -23,7 +23,7 @@ A cryptocurrency trader for all famous exchanges.
 ## utils
 - [x] trader: API test.
 - [x] monitor: Monitor market price and alter.
-- [ ] arbitrage: arbitrage between exchanges.
+- [x] arbitrage: arbitrage between exchanges.
 
 ## Donation (捐款)
 * Donation will make me update this repo quicker, and as a way to support my work.

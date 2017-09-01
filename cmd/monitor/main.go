@@ -32,7 +32,7 @@ func stringToInterfaceSlice(s []string) []interface{} {
 
 func main() {
 	// ctx := context.Background()
-	slackApi := slack.New("")
+	slackApi := slack.New(Opts.SlackKey)
 	slackApi.SetDebug(false)
 
 	rtm := slackApi.NewRTM()
