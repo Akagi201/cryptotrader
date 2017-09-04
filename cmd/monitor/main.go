@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Akagi201/cryptotrader/btc9"
+	"github.com/Akagi201/cryptotrader/binance"
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
 	mapset "github.com/deckarep/golang-set"
@@ -67,7 +67,7 @@ func main() {
 
 	yunbiApi := yunbi.New("", "")
 	viabtcApi := viabtc.New("", "")
-	btc9Api := btc9.New("", "")
+	binanceApi := binance.New("", "")
 
 	go func() {
 		for {
@@ -90,14 +90,9 @@ func main() {
 				log.Errorf("Get BCC ticker failed, err: %v", err)
 			}
 
-			omgTicker, err := btc9Api.GetTicker("cny", "omg")
+			dntTicker, err := binanceApi.GetTicker("eth", "dnt")
 			if err != nil {
-				log.Errorf("Get OMG ticker failed, err: %v", err)
-			}
-
-			payTicker, err := btc9Api.GetTicker("cny", "pay")
-			if err != nil {
-				log.Errorf("Get PAY ticker failed, err: %v", err)
+				log.Errorf("Get DNT ticker failed, err: %v", err)
 			}
 
 			channel := FindChannelByName(rtm, "devops")
@@ -105,8 +100,7 @@ func main() {
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Current: %v", ethTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BCC Current: %v", bccTicker.Last), channel.ID))
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Current: %v", btcTicker.Last), channel.ID))
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG Current: %v", omgTicker.Last), channel.ID))
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY Current: %v", payTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("DNT Current: %v", dntTicker.Last), channel.ID))
 
 			time.Sleep(30 * time.Minute)
 		}
@@ -152,7 +146,7 @@ func main() {
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT High: %v", sntTicker.Last), channel.ID))
 		}
 
-		if sntTicker.Last < 0.35 {
+		if sntTicker.Last < 0.15 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("SNT Low: %v", sntTicker.Last), channel.ID))
 		}
@@ -163,12 +157,12 @@ func main() {
 		}
 
 		log.Infof("ETH latest: %+v", ethTicker.Last)
-		if ethTicker.Last > 1400 {
+		if ethTicker.Last > 2500 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH High: %v", ethTicker.Last), channel.ID))
 		}
 
-		if ethTicker.Last < 1350 {
+		if ethTicker.Last < 1500 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("ETH Low: %v", ethTicker.Last), channel.ID))
 		}
@@ -180,48 +174,31 @@ func main() {
 
 		log.Infof("BTC Latest: %+v", btcTicker.Last)
 
-		if btcTicker.Last > 19000 {
+		if btcTicker.Last > 31000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC High: %v", btcTicker.Last), channel.ID))
 		}
 
-		if btcTicker.Last < 17000 {
+		if btcTicker.Last < 20000 {
 			channel := FindChannelByName(rtm, "devops")
 			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("BTC Low: %v", btcTicker.Last), channel.ID))
 		}
 
-		omgTicker, err := btc9Api.GetTicker("cny", "omg")
+		dntTicker, err := binanceApi.GetTicker("eth", "dnt")
 		if err != nil {
-			log.Error("Get OMG ticker failed, err: %v", err)
+			log.Error("Get DNT ticker failed, err: %v", err)
 		}
 
-		log.Infof("OMG Latest: %+v", omgTicker.Last)
+		log.Infof("DNT Latest: %+v", dntTicker.Last)
 
-		if omgTicker.Last > 10 {
+		if dntTicker.Last > 0.000285 {
 			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG High: %v", omgTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("DNT High: %v", dntTicker.Last), channel.ID))
 		}
 
-		if omgTicker.Last < 8 {
+		if dntTicker.Last < 0.0002 {
 			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("OMG Low: %v", omgTicker.Last), channel.ID))
-		}
-
-		payTicker, err := btc9Api.GetTicker("cny", "pay")
-		if err != nil {
-			log.Error("Get PAY ticker failed, err: %v", err)
-		}
-
-		log.Infof("PAY Latest: %+v", payTicker.Last)
-
-		if payTicker.Last > 6.5 {
-			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY High: %v", payTicker.Last), channel.ID))
-		}
-
-		if payTicker.Last < 6 {
-			channel := FindChannelByName(rtm, "devops")
-			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("PAY Low: %v", payTicker.Last), channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage(fmt.Sprintf("DNT Low: %v", dntTicker.Last), channel.ID))
 		}
 
 		time.Sleep(5 * time.Second)
