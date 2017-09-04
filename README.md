@@ -24,6 +24,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] trader: API test.
 - [x] monitor: Monitor market price and alter.
 - [x] arbitrage: arbitrage between exchanges.
+- [x] yunbimonitor: monitor yunbi api service.
 
 ## Donation (捐款)
 * Donation will make me update this repo quicker, and as a way to support my work.
