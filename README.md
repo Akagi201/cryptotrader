@@ -13,6 +13,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] bittrex
 - [x] liqui
 - [x] poloniex
+- [x] lhang
 
 ## Data API
 - [x] etherscan

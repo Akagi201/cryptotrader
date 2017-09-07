@@ -8,6 +8,7 @@ import (
 	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/fixer"
 	"github.com/Akagi201/cryptotrader/huobi"
+	"github.com/Akagi201/cryptotrader/lhang"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
 	"github.com/Akagi201/cryptotrader/poloniex"
@@ -199,7 +200,7 @@ func main() {
 		log.Infof("Get rate: %v", rate)
 	}
 
-	{
+	if false {
 		// poloniex
 		api := poloniex.New("", "")
 
@@ -211,4 +212,15 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
+	{
+		// lhang
+		api := lhang.New("", "")
+
+		ticker, err := api.GetTicker("cny", "btc")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
 }
