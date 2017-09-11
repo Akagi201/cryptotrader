@@ -14,6 +14,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] liqui
 - [x] poloniex
 - [x] lhang
+- [x] jubi
 
 ## Data API
 - [x] etherscan
@@ -32,3 +33,5 @@ A cryptocurrency trader for all famous exchanges.
 * 捐款可以鼓励我更快的更新这个 repo, 同时也是对我工作的支持.
 * ETH: 0x258ce53268BEaA9BA97fA6b7790d7555ae4044fc
 * BTC: 1GBFh2XS2WH86dsV7BBXxFTRz6bPuQsYET
+* LTC: LPKReEbhhXfePd6j8VgEtsLE5J4AxMiyDs
+* NEO: AU1jyMccQCzEnns2BaFcnDPB3W8JqEDYyQ

@@ -8,6 +8,7 @@ import (
 	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/fixer"
 	"github.com/Akagi201/cryptotrader/huobi"
+	"github.com/Akagi201/cryptotrader/jubi"
 	"github.com/Akagi201/cryptotrader/lhang"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
@@ -212,9 +213,21 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// lhang
 		api := lhang.New("", "")
+
+		ticker, err := api.GetTicker("cny", "btc")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// jubi
+		api := jubi.New("", "")
 
 		ticker, err := api.GetTicker("cny", "btc")
 		if err != nil {
