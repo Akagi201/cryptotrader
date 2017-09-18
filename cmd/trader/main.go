@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Akagi201/cryptotrader/allcoin"
 	"github.com/Akagi201/cryptotrader/binance"
+	"github.com/Akagi201/cryptotrader/bitfinex"
 	"github.com/Akagi201/cryptotrader/bittrex"
 	"github.com/Akagi201/cryptotrader/btc9"
 	"github.com/Akagi201/cryptotrader/chbtc"
@@ -238,9 +239,21 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// allcoin
 		api := allcoin.New("", "")
+
+		ticker, err := api.GetTicker("usd", "btc")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// bitfinex
+		api := bitfinex.New("", "")
 
 		ticker, err := api.GetTicker("usd", "btc")
 		if err != nil {

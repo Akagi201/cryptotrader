@@ -16,6 +16,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] lhang
 - [x] jubi
 - [x] allcoin
+- [x] bitfinex
 
 ## Data API
 - [x] etherscan
