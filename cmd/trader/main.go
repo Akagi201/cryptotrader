@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Akagi201/cryptotrader/allcoin"
 	"github.com/Akagi201/cryptotrader/binance"
 	"github.com/Akagi201/cryptotrader/bittrex"
 	"github.com/Akagi201/cryptotrader/btc9"
@@ -22,7 +23,7 @@ import (
 func main() {
 	if false {
 		// CHBTC
-		api := chbtc.New("c390fceb-cee2-44bd-980a-0662aed39142", "dfffc1e0-bab1-46ca-a947-49d814154836")
+		api := chbtc.New("", "")
 
 		ticker, err := api.GetTicker("cny", "eth")
 		if err != nil {
@@ -225,11 +226,23 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// jubi
 		api := jubi.New("", "")
 
 		ticker, err := api.GetTicker("cny", "btc")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// allcoin
+		api := allcoin.New("", "")
+
+		ticker, err := api.GetTicker("usd", "btc")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
