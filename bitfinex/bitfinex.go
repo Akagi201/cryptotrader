@@ -1,3 +1,4 @@
+// Package bitfinex bitfinex rest api
 package bitfinex
 
 import (
