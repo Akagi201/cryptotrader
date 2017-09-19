@@ -70,5 +70,11 @@
 * HD Wallet 使用一个 master seed, 来顺序的生成后续的一系列钱包地址.
 * Refs: <http://support.mycelium.com/hc/en-us/articles/207045475-What-does-HD-in-HD-Wallet-mean->
 
+## GBI 指数
+* 区块链全球指数(Global Blockchain Index).
+* 反映区块链行业景气程度的综合相对指数. 该指数选取 15 个区块链行业主要币种, 并按照特定权重, 使用加权平均法计算相对指数.
+* 解释: <http://gbi.inblockchain.com/gbi_method>
+* 数据来源: <https://www.coingecko.com/en>
+
 ## Refs
 * [MBAlib](http://wiki.mbalib.com/wiki/)
