@@ -76,5 +76,13 @@
 * 解释: <http://gbi.inblockchain.com/gbi_method>
 * 数据来源: <https://www.coingecko.com/en>
 
+## ROUTING NUMBER
+* 由ABA(美国银行家协会)在美联储监管和协助下提出的金融机构识别码, 很多金融机构都有一个 ROUTING NUMBER, 主要用于和银行相关的交易, 转帐, 清算等的路由确认, 由 9 位(8 位内容 + 1 位验证码)组成, 主要用于美国及北美地区.
+
+## SWIFT Code / BIC
+* SWIFT(Society Worldwide Interbank Financial Telecommunication, 环球同业银行金融电讯协会)由环球银行电信协会提出并被国际标准化组织(International Organization for Standardization, 缩写 ISO)通过的银行识别代码, 凡该协会的成员银行都有自己特定的 SWIFT 代码, 其原名是 BIC(Bank Indentifier Code), 每个银行(包括每个分行, 支行)都有一个代码, 是由银行名称的英文缩写和总行所在地的英文缩写(也有用数字加字母表示某城市的)以及该分行所在地的代码(字母, 数字或混合)组成.
+* SWIFT Code, IBAN 和 Routing Number 都是银行国际电汇编码的一种, 只是使用地区不同而已.
+* 美国和北美地区的银行一般使用 Routing Number, 欧洲的银行(尤其是德国)使用 IBAN, 北美和欧洲以外的国家和地区, 大多使用 SWIFTCODE. 中国的银行就使用 SWIFT CODE, 实际上, SWIFTCODE 的功用等同于北美的 ROUTING Number, 只不过 SWIFTCODE 在国际上使用得更为普遍.
+
 ## Refs
 * [MBAlib](http://wiki.mbalib.com/wiki/)
