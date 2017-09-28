@@ -42,5 +42,5 @@ A cryptocurrency trader for all famous exchanges.
 * NEO: AU1jyMccQCzEnns2BaFcnDPB3W8JqEDYyQ
 
 ## Join us
-* 量投社: [Slack](https://join.slack.com/t/cryptotraderhub/shared_invite/MjM5MTU2MzY3MzQ2LTE1MDUxMzQ1MjYtYmI0NGNlZTQ4YQ) [Telegram Group](https://t.me/cryptotraderhub) [Telegram Channel](https://t.me/cryptotraderchannel)
+* 量投社: [Slack](https://join.slack.com/t/cryptotraderhub/shared_invite/MjM5MTU2MzY3MzQ2LTE1MDUxMzQ1MjYtYmI0NGNlZTQ4YQ) [Telegram Group](https://t.me/cryptotraderhub) [Telegram Channel](https://t.me/cryptotraderchannel) [Discord](https://discord.gg/ydBJspD)
 * 量投社: 讨论海外项目投资, 量化交易, 搬砖套利, 挖矿, 区块链技术.
