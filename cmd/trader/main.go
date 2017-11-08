@@ -19,6 +19,7 @@ import (
 	"github.com/Akagi201/cryptotrader/poloniex"
 	"github.com/Akagi201/cryptotrader/viabtc"
 	"github.com/Akagi201/cryptotrader/yunbi"
+	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 )
@@ -277,11 +278,23 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// bitflyer
 		api := bitflyer.New("", "")
 
 		ticker, err := api.GetTicker("jpy", "btc")
+		if err != nil {
+			log.Errorf("Get ticker failed, err: %v", err)
+		}
+
+		log.Infof("Get ticker: %+v", ticker)
+	}
+
+	{
+		// ZB
+		api := zb.New("", "")
+
+		ticker, err := api.GetTicker("btc", "eth")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}

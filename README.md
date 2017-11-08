@@ -19,6 +19,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] bitfinex
 - [x] coincheck
 - [x] bitflyer
+- [x] zb
 
 ## Data API
 - [x] etherscan
