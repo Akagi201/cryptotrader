@@ -18,3 +18,4 @@
 /cmd/arbitrage/arbitrage
 /cmd/yunbimonitor/yunbimonitor
 /cmd/marketmaker/marketmaker
+/cmd/tradebot/tradebot

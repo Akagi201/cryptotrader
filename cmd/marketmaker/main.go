@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	bc *binancego.Client
+	bc  *binancego.Client
 	cnt int
 )
 
