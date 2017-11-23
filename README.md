@@ -25,6 +25,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] cex
 - [ ] exx
 - [ ] kucoin
+- [ ] bigone
 
 ### Others
 - [x] bittrex
