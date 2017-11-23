@@ -1,4 +1,4 @@
-base="cny"
+base="btc"
 quote="eth"
-exchanges=["yunbi", "huobi", "okcoin", "chbtc"]
+exchanges=["okcoin", "huobi", "zb"]
 slack-key=""

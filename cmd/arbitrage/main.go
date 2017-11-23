@@ -2,14 +2,12 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"time"
 
-	"fmt"
-
-	"github.com/Akagi201/cryptotrader/chbtc"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/okcoin"
-	"github.com/Akagi201/cryptotrader/yunbi"
+	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/goSTL/sort"
 	"github.com/nlopes/slack"
 	"github.com/olekukonko/tablewriter"
@@ -27,13 +25,6 @@ func GetPriceList(base string, quote string, exchanges []string) []ExchangePrice
 	priceList := []ExchangePrice{}
 	for _, ex := range exchanges {
 		switch ex {
-		case "yunbi":
-			api := yunbi.New("", "")
-			ticker, _ := api.GetTicker(base, quote)
-			priceList = append(priceList, ExchangePrice{
-				Exchange: ex,
-				Price:    ticker.Last,
-			})
 		case "huobi":
 			api := huobi.New("", "")
 			ticker, _ := api.GetTicker(base, quote)
@@ -48,8 +39,8 @@ func GetPriceList(base string, quote string, exchanges []string) []ExchangePrice
 				Exchange: ex,
 				Price:    ticker.Last,
 			})
-		case "chbtc":
-			api := chbtc.New("", "")
+		case "zb":
+			api := zb.New("", "")
 			ticker, _ := api.GetTicker(base, quote)
 			priceList = append(priceList, ExchangePrice{
 				Exchange: ex,

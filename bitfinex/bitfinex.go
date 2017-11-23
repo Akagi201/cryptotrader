@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Akagi201/cryptotrader/model"
+	bitfinex "github.com/bitfinexcom/bitfinex-api-go/v1"
 )
 
 // Bitfinex API data

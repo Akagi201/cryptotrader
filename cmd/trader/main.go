@@ -6,19 +6,16 @@ import (
 	"github.com/Akagi201/cryptotrader/bitfinex"
 	"github.com/Akagi201/cryptotrader/bitflyer"
 	"github.com/Akagi201/cryptotrader/bittrex"
-	"github.com/Akagi201/cryptotrader/btc9"
-	"github.com/Akagi201/cryptotrader/chbtc"
+	"github.com/Akagi201/cryptotrader/cex"
 	"github.com/Akagi201/cryptotrader/coincheck"
+	"github.com/Akagi201/cryptotrader/coinegg"
 	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/fixer"
 	"github.com/Akagi201/cryptotrader/huobi"
-	"github.com/Akagi201/cryptotrader/jubi"
-	"github.com/Akagi201/cryptotrader/lhang"
+	"github.com/Akagi201/cryptotrader/lbank"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
 	"github.com/Akagi201/cryptotrader/poloniex"
-	"github.com/Akagi201/cryptotrader/viabtc"
-	"github.com/Akagi201/cryptotrader/yunbi"
 	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
@@ -26,17 +23,17 @@ import (
 
 func main() {
 	if false {
-		// CHBTC
-		api := chbtc.New("", "")
+		// zb
+		api := zb.New("", "")
 
-		ticker, err := api.GetTicker("cny", "eth")
+		ticker, err := api.GetTicker("btc", "eth")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
 
 		log.Infof("Get ticker: %+v", ticker)
 
-		orderBook, err := api.GetOrderBook("cny", "eth", 3, 0.1)
+		orderBook, err := api.GetOrderBook("btc", "eth", 3, 0.1)
 		if err != nil {
 			log.Errorf("Get orderbook failed, err: %v", err)
 		}
@@ -44,7 +41,7 @@ func main() {
 		orderBookStr := spew.Sdump(orderBook)
 		log.Infof("Get orderbook: %+v", orderBookStr)
 
-		trades, err := api.GetTrades("cny", "eth", 0)
+		trades, err := api.GetTrades("btc", "eth", 0)
 		if err != nil {
 			log.Errorf("Get trades failed, err: %v", err)
 		}
@@ -52,7 +49,7 @@ func main() {
 		tradesStr := spew.Sdump(trades)
 		log.Infof("Get trades: %v", tradesStr)
 
-		kline, err := api.GetKline("cny", "eth", "1min", 0, 0)
+		kline, err := api.GetRecords("btc", "eth", "1min", 0, 0)
 		if err != nil {
 			log.Errorf("Get kline failed, err: %v", err)
 		}
@@ -69,38 +66,9 @@ func main() {
 	}
 
 	if false {
-		// yunbi
-		api := yunbi.New("", "")
-		ticker, err := api.GetTicker("cny", "snt")
-		if err != nil {
-			log.Errorf("Get ticker failed, err: %v", err)
-		}
-
-		log.Infof("Get ticker: %+v", ticker)
-
-		tickerList, err := api.GetTickerList()
-		if err != nil {
-			log.Errorf("Get tickerList failed, err: %v", err)
-		}
-
-		log.Infof("Get tickerList: %v", tickerList)
-	}
-
-	if false {
-		// viabtc
-		api := viabtc.New("", "")
-		ticker, err := api.GetTicker("cny", "bcc")
-		if err != nil {
-			log.Errorf("Get ticker failed, err: %v", err)
-		}
-
-		log.Infof("Get ticker: %+v", ticker)
-	}
-
-	if false {
 		// huobi
 		api := huobi.New("", "")
-		ticker, err := api.GetTicker("cny", "eth")
+		ticker, err := api.GetTicker("btc", "eth")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -120,16 +88,16 @@ func main() {
 	}
 
 	if false {
-		// btc9
-		api := btc9.New("", "")
-		omgTicker, err := api.GetTicker("cny", "omg")
+		// cex
+		api := cex.New("", "")
+		omgTicker, err := api.GetTicker("btc", "omg")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
 
 		log.Infof("Get OMG ticker: %+v", omgTicker)
 
-		payTicker, err := api.GetTicker("cny", "pay")
+		payTicker, err := api.GetTicker("btc", "pay")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -141,7 +109,7 @@ func main() {
 		// okcoin
 		api := okcoin.New("", "")
 
-		ticker, err := api.GetTicker("cny", "eth")
+		ticker, err := api.GetTicker("btc", "eth")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -198,7 +166,7 @@ func main() {
 		// fixer
 		api := fixer.New()
 
-		rate, err := api.GetRate("USD", "CNY")
+		rate, err := api.GetRate("USD", "btc")
 		if err != nil {
 			log.Errorf("Get rate failed, err: %v", err)
 		}
@@ -219,10 +187,10 @@ func main() {
 	}
 
 	if false {
-		// lhang
-		api := lhang.New("", "")
+		// lbank
+		api := lbank.New("", "")
 
-		ticker, err := api.GetTicker("cny", "btc")
+		ticker, err := api.GetTicker("btc", "btc")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -231,10 +199,10 @@ func main() {
 	}
 
 	if false {
-		// jubi
-		api := jubi.New("", "")
+		// coinegg
+		api := coinegg.New("", "")
 
-		ticker, err := api.GetTicker("cny", "btc")
+		ticker, err := api.GetTicker("btc", "btc")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}
@@ -283,18 +251,6 @@ func main() {
 		api := bitflyer.New("", "")
 
 		ticker, err := api.GetTicker("jpy", "btc")
-		if err != nil {
-			log.Errorf("Get ticker failed, err: %v", err)
-		}
-
-		log.Infof("Get ticker: %+v", ticker)
-	}
-
-	{
-		// ZB
-		api := zb.New("", "")
-
-		ticker, err := api.GetTicker("btc", "eth")
 		if err != nil {
 			log.Errorf("Get ticker failed, err: %v", err)
 		}

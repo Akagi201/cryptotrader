@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ETHAPI = "https://be.huobi.com/"
+	API = "https://api.huobi.pro/"
 )
 
 // Huobi API data
@@ -31,7 +31,7 @@ func New(accessKey string, secretKey string) *Huobi {
 
 // GetTicker 行情
 func (hb *Huobi) GetTicker(base string, quote string) (*model.Ticker, error) {
-	url := ETHAPI + "market/detail/merged?symbol=" + strings.ToLower(quote) + strings.ToLower(base)
+	url := API + "market/detail/merged?symbol=" + strings.ToLower(quote) + strings.ToLower(base)
 
 	log.Debugf("Request url: %v", url)
 

@@ -1,5 +1,5 @@
-// Package btc9 btc9 rest api package
-package btc9
+// Package cex cex rest api package
+package cex
 
 import (
 	"io/ioutil"
@@ -13,25 +13,25 @@ import (
 )
 
 const (
-	API = "https://btc9.com/Jsons"
+	API = "https://cex.com/Jsons"
 )
 
-// Btc9 API data
-type Btc9 struct {
+// Cex API data
+type Cex struct {
 	AccessKey string
 	SecretKey string
 }
 
-// New create new Btc9 API data
-func New(accessKey string, secretKey string) *Btc9 {
-	return &Btc9{
+// New create new Cex API data
+func New(accessKey string, secretKey string) *Cex {
+	return &Cex{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 	}
 }
 
 // GetTicker 行情
-func (bt *Btc9) GetTicker(base string, quote string) (ticker *model.Ticker, rerr error) {
+func (bt *Cex) GetTicker(base string, quote string) (ticker *model.Ticker, rerr error) {
 	defer func() {
 		if err := recover(); err != nil {
 			ticker = nil

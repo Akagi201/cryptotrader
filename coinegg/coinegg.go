@@ -1,5 +1,5 @@
-// Package jubi jubi rest api package
-package jubi
+// Package coinegg coinegg rest api package
+package coinegg
 
 import (
 	"io/ioutil"
@@ -13,25 +13,25 @@ import (
 )
 
 const (
-	API = "https://www.jubi.com/"
+	API = "https://api.coinegg.com"
 )
 
-// Jubi API data
-type Jubi struct {
+// Coinegg API data
+type Coinegg struct {
 	AccessKey string
 	SecretKey string
 }
 
-// New create new Jubi API data
-func New(accessKey string, secretKey string) *Jubi {
-	return &Jubi{
+// New create new Coinegg API data
+func New(accessKey string, secretKey string) *Coinegg {
+	return &Coinegg{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 	}
 }
 
 // GetTicker 行情
-func (jb *Jubi) GetTicker(base string, quote string) (*model.Ticker, error) {
+func (*Coinegg) GetTicker(base string, quote string) (*model.Ticker, error) {
 	url := API + "api/v1/ticker" + "?coin=" + strings.ToLower(quote)
 
 	log.Debugf("Request url: %v", url)

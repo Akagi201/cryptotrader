@@ -13,8 +13,7 @@ import (
 )
 
 const (
-	US_API    = "https://www.okcoin.com/api/v1/"
-	CHINA_API = "https://www.okcoin.cn/api/v1/"
+	API = "https://www.okcoin.com/api/v1/"
 )
 
 // OkCoin API data
@@ -33,7 +32,7 @@ func New(accessKey string, secretKey string) *OkCoin {
 
 // GetTicker 行情
 func (oc *OkCoin) GetTicker(base string, quote string) (*model.Ticker, error) {
-	url := CHINA_API + "ticker.do" + "?symbol=" + quote + "_" + base
+	url := API + "ticker.do" + "?symbol=" + quote + "_" + base
 
 	log.Debugf("Request url: %v", url)
 

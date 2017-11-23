@@ -3,23 +3,36 @@
 A cryptocurrency trader for all famous exchanges.
 
 ## Supported Exchanges
-- [x] CHBTC
-- [x] yunbi
-- [x] viabtc
+
+### Exchange move
+* btc9 -> cex
+* chbtc -> exx, zb
+* btc38 -> aex
+* jubi -> coinegg
+* etcwin -> btc018
+* lhang -> lbank
+
+### Deprecated
+- [x] ~~yunbi~~
+- [x] ~~viabtc~~
+
+### China
+- [x] okcoin
 - [x] huobi
 - [x] binance
-- [x] btc9
-- [x] okcoin
+- [x] zb
+- [x] allcoin
+- [x] cex
+- [ ] exx
+- [ ] kucoin
+
+### Others
 - [x] bittrex
 - [x] liqui
 - [x] poloniex
-- [x] lhang
-- [x] jubi
-- [x] allcoin
 - [x] bitfinex
 - [x] coincheck
 - [x] bitflyer
-- [x] zb
 
 ## Data API
 - [x] etherscan
@@ -29,9 +42,7 @@ A cryptocurrency trader for all famous exchanges.
 
 ## utils
 - [x] trader: API test.
-- [x] monitor: Monitor market price and alter.
-- [x] arbitrage: arbitrage between exchanges.
-- [x] yunbimonitor: monitor yunbi api service.
+- [x] tradebot: best trade bot.
 
 ## Donation (捐款)
 * Donation will make me update this repo quicker, and as a way to support my work.

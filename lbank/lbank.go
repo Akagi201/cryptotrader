@@ -1,10 +1,9 @@
-// Package lhang lhang rest api package
-package lhang
+// Package lbank lbank rest api package
+package lbank
 
 import (
 	"io/ioutil"
 	"net/http"
-
 	"strconv"
 
 	"github.com/Akagi201/cryptotrader/model"
@@ -13,25 +12,25 @@ import (
 )
 
 const (
-	API = "https://api.lhang.com/v1"
+	API = "https://api.lbank.info/v1"
 )
 
-// LHang API data
-type LHang struct {
+// LBank API data
+type LBank struct {
 	AccessKey string
 	SecretKey string
 }
 
 // New create new LHang API data
-func New(accessKey string, secretKey string) *LHang {
-	return &LHang{
+func New(accessKey string, secretKey string) *LBank {
+	return &LBank{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 	}
 }
 
 // GetTicker 行情
-func (lh *LHang) GetTicker(base string, quote string) (*model.Ticker, error) {
+func (*LBank) GetTicker(base string, quote string) (*model.Ticker, error) {
 	url := API + "/ticker.do" + "?symbol=" + quote + "_" + base
 
 	log.Debugf("Request url: %v", url)

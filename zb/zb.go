@@ -129,13 +129,11 @@ func (z *ZB) GetOrderBook(base string, quote string, size int, merge float64) (*
 	log.Debugf("Response body: %v", string(body))
 
 	orderBook := &model.OrderBook{
-		Base:  base,
-		Quote: quote,
-		Time:  time.Unix(gjson.GetBytes(body, "timestamp").Int(), 0),
+		Time: time.Unix(gjson.GetBytes(body, "timestamp").Int(), 0),
 	}
 
 	gjson.GetBytes(body, "asks").ForEach(func(k, v gjson.Result) bool {
-		orderBook.Asks = append(orderBook.Asks, &model.Order{
+		orderBook.Asks = append(orderBook.Asks, model.MarketOrder{
 			Price:  v.Array()[0].Float(),
 			Amount: v.Array()[1].Float(),
 		})
@@ -144,7 +142,7 @@ func (z *ZB) GetOrderBook(base string, quote string, size int, merge float64) (*
 	})
 
 	gjson.GetBytes(body, "bids").ForEach(func(k, v gjson.Result) bool {
-		orderBook.Bids = append(orderBook.Bids, &model.Order{
+		orderBook.Bids = append(orderBook.Bids, model.MarketOrder{
 			Price:  v.Array()[0].Float(),
 			Amount: v.Array()[1].Float(),
 		})
@@ -224,7 +222,7 @@ func (z *ZB) GetTrades(base string, quote string, since int) (*model.Trades, err
 //   * 12hour: 12 小时
 // * since: 从这个时间戳之后的
 // * size: 返回数据的条数限制(默认为 1000, 如果返回数据多于 1000 条, 那么只返回 1000 条)
-func (z *ZB) GetKline(base string, quote string, typ string, since int, size int) (*model.Kline, error) {
+func (z *ZB) GetRecords(base string, quote string, typ string, since int, size int) ([]model.Record, error) {
 	url := MarketAPI + "kline?currency=" + quote + "_" + base
 
 	if len(typ) != 0 {
@@ -251,26 +249,23 @@ func (z *ZB) GetKline(base string, quote string, typ string, since int, size int
 
 	log.Debugf("Response body: %v", string(body))
 
-	kline := new(model.Kline)
-
-	kline.MoneyType = gjson.GetBytes(body, "moneyType").String()
-	kline.Symbol = gjson.GetBytes(body, "symbol").String()
+	var records []model.Record
 
 	gjson.GetBytes(body, "data").ForEach(func(k, v gjson.Result) bool {
-		klinedata := &model.KlineData{
-			Time:   time.Unix(v.Array()[0].Int()/1000, 0),
-			Open:   v.Array()[1].Float(),
-			High:   v.Array()[2].Float(),
-			Low:    v.Array()[3].Float(),
-			Close:  v.Array()[4].Float(),
-			Amount: v.Array()[5].Float(),
+		record := model.Record{
+			Time:  time.Unix(v.Array()[0].Int()/1000, 0),
+			Open:  v.Array()[1].Float(),
+			High:  v.Array()[2].Float(),
+			Low:   v.Array()[3].Float(),
+			Close: v.Array()[4].Float(),
+			Vol:   v.Array()[5].Float(),
 		}
 
-		kline.Data = append(kline.Data, klinedata)
+		records = append(records, record)
 		return true
 	})
 
-	return kline, nil
+	return records, nil
 }
 
 // SecretDigest calc secert digest
