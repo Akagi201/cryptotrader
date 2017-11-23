@@ -108,5 +108,25 @@
 ## IOC
 * Immediate Or Cancel Order, 立刻执行或取消定单, 应用于定单的立刻执行或取消(IOC)有效时间命令定单任何未立刻执行的部分将被取消.
 
+## CCI
+* Commodity Channel Index, 顺势指标, 是由美国股市分析家唐纳德·蓝伯特(Donald Lambert)所创造的, 是一种重点研判股价偏离度的股市分析工具.
+* <http://wiki.mbalib.com/wiki/%E9%A1%BA%E5%8A%BF%E6%8C%87%E6%A0%87>
+
+## MACD
+* Moving Average Convergence Divergence, 平滑异同移动平均线, 也称移动平均聚散指标.
+* 是查拉尔·阿佩尔(Geral Appel)于 1979 年提出的, 由一快及一慢指数移动平均 (EMA) 之间的差计算出来. "快"指短时期的EMA, 而"慢"则指长时期的 EMA.
+
+## RSI
+* Relative Strength Index, 相对强弱指标.
+* 通过比较一段时期内的平均收盘涨数和平均收盘跌数来分析市场买沽盘的意向和实力, 从而作出未来市场的走势.
+
+## SAR
+* Stop and Reveres, SAR / The Parabolic Time/Price System, 抛物线转向.
+* 抛物线转向(SAR)也称停损点转向, 其全称叫 "Stop and Reveres", 缩写 "SAR", 是由美国技术分析大师威尔斯·威尔德（Wells Wilder）所创造的，是一种简单易学、比较准确的中短期技术分析工具。
+
+## EMA
+* Exponential Moving Average, EXPMA, 指数平均数指标.
+* 它也是一种趋向类指标, 其构造原理是仍然对价格收盘价进行算术平均, 并根据计算结果来进行分析, 用于判断价格未来走势的变动趋势.
+
 ## Refs
 * [MBAlib](http://wiki.mbalib.com/wiki/)
