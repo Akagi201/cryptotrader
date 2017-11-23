@@ -184,12 +184,11 @@ func (z *ZB) GetTrades(base string, quote string, since int) (*model.Trades, err
 
 	gjson.ParseBytes(body).ForEach(func(k, v gjson.Result) bool {
 		trade := &model.Trade{
-			Amount:    v.Get("amount").Float(),
-			Price:     v.Get("price").Float(),
-			Tid:       v.Get("tid").Int(),
-			TradeType: v.Get("trade_type").String(),
-			Type:      v.Get("type").String(),
-			Date:      time.Unix(v.Get("date").Int(), 0),
+			Amount: v.Get("amount").Float(),
+			Price:  v.Get("price").Float(),
+			ID:     v.Get("tid").Int(),
+			Type:   v.Get("type").String(),
+			Time:   time.Unix(v.Get("date").Int(), 0),
 		}
 		*trades = append(*trades, trade)
 		return true

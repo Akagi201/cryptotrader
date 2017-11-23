@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Akagi201/binancego"
+	"github.com/Akagi201/cryptotrader/binance"
 	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +46,7 @@ func (tc *TickerCmd) Execute(args []string) error {
 		for _, v := range opts.Exchanges {
 			switch v {
 			case "binance":
-				c := binancego.NewClient("", "")
+				c := binance.New("", "")
 				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 				defer cancel()
 
@@ -71,7 +71,7 @@ func (tc *TickerCmd) Execute(args []string) error {
 	} else {
 		switch exchange {
 		case "binance":
-			c := binancego.NewClient("", "")
+			c := binance.New("", "")
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 
