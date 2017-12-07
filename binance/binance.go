@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Akagi201/binancego/model"
+	"github.com/Akagi201/cryptotrader/model"
 	"github.com/Akagi201/utilgo/enums"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
