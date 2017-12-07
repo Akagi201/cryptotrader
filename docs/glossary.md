@@ -128,5 +128,10 @@
 * Exponential Moving Average, EXPMA, 指数平均数指标.
 * 它也是一种趋向类指标, 其构造原理是仍然对价格收盘价进行算术平均, 并根据计算结果来进行分析, 用于判断价格未来走势的变动趋势.
 
+## 有价证券
+* Negotiable securities/Valuable papers
+* 包括股票和债券.
+* 代替性证券, 替代性证券.
+
 ## Refs
 * [MBAlib](http://wiki.mbalib.com/wiki/)

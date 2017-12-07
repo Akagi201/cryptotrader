@@ -1,0 +1,2 @@
+// Package etherdelta
+package etherdelta
