@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 
+	"github.com/Akagi201/cryptotrader/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -103,4 +104,35 @@ func (c *Client) GetPairs(ctx context.Context) ([]string, error) {
 		pairs = append(pairs, v.String())
 	}
 	return pairs, nil
+}
+
+// GetMarketInfo 交易市场订单参数, 返回所有系统支持的交易市场的参数信息，包括交易费，最小下单量，价格精度等。for http://data.gate.io/api2/1/marketinfo
+func (c *Client) GetMarketInfo(ctx context.Context) ([]model.MarketInfo, error) {
+	req, err := c.newRequest(ctx, "GET", "marketinfo", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var marketInfos []model.MarketInfo
+	var marketInfo model.MarketInfo
+
+	for _, v := range gjson.GetBytes(body, "pairs").Array() {
+		v.ForEach(func(key, value gjson.Result) bool {
+			marketInfo.Symbol = key.String()
+			marketInfo.DecimalPlaces = value.Get("decimal_places").Int()
+			marketInfo.MinAmount = value.Get("min_amount").Float()
+			marketInfo.Fee = value.Get("fee").Float()
+			marketInfos = append(marketInfos, marketInfo)
+			return true // keep iterating
+		})
+	}
+
+	return marketInfos, nil
 }

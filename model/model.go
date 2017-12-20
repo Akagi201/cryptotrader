@@ -79,3 +79,10 @@ type Balance struct {
 	Free     float64
 	Frozen   float64
 }
+
+type MarketInfo struct {
+	Symbol        string
+	DecimalPlaces int64
+	MinAmount     float64
+	Fee           float64
+}

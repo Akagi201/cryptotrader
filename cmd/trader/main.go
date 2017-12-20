@@ -426,13 +426,22 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		{
+		if false {
 			pairs, err := c.GetPairs(ctx)
 			if err != nil {
 				log.Fatalf("gate.io get pairs failed, err: %v", err)
 			}
 
 			log.Infof("gate.io pairs: %+v", pairs)
+		}
+
+		{
+			marketInfo, err := c.GetMarketInfo(ctx)
+			if err != nil {
+				log.Fatalf("gate.io get market_info failed, err: %v", err)
+			}
+
+			log.Infof("gate.io market_info: %+v", marketInfo)
 		}
 
 	}
