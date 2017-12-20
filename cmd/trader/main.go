@@ -18,6 +18,7 @@ import (
 	"github.com/Akagi201/cryptotrader/lbank"
 	"github.com/Akagi201/cryptotrader/liqui"
 	"github.com/Akagi201/cryptotrader/okcoin"
+	"github.com/Akagi201/cryptotrader/okex"
 	"github.com/Akagi201/cryptotrader/poloniex"
 	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/davecgh/go-spew/spew"
@@ -292,7 +293,7 @@ func main() {
 			log.Infof("Binance Server time: %v", serverTime)
 		}
 
-		{
+		if false {
 			nulsDepth, err := rc.GetDepth(ctx, "nuls", "btc", 0)
 			if err != nil {
 				log.Fatalf("Get NULS depth failed, err: %v", err)
@@ -398,6 +399,22 @@ func main() {
 			}
 
 			log.Infof("Get my ZRX trades: %+v", zrxTrades)
+		}
+	}
+
+	{
+		c := okex.New("", "")
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		{
+			ethTicker, err := c.GetTicker(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("OKEX get eth-btc ticker failed, err: %v", err)
+			}
+
+			log.Infof("OKEX ETH-BTC Ticker: %+v", ethTicker)
 		}
 	}
 }

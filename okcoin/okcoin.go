@@ -4,7 +4,6 @@ package okcoin
 import (
 	"io/ioutil"
 	"net/http"
-
 	"strconv"
 
 	"github.com/Akagi201/cryptotrader/model"
