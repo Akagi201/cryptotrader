@@ -14,6 +14,7 @@ import (
 	"github.com/Akagi201/cryptotrader/coinegg"
 	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/fixer"
+	"github.com/Akagi201/cryptotrader/gateio"
 	"github.com/Akagi201/cryptotrader/huobi"
 	"github.com/Akagi201/cryptotrader/lbank"
 	"github.com/Akagi201/cryptotrader/liqui"
@@ -251,7 +252,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		rc := binance.New("", "")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -402,13 +403,14 @@ func main() {
 		}
 	}
 
-	{
+	if false {
+		// OKEX
 		c := okex.New("", "")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		{
+		if false {
 			ethTicker, err := c.GetTicker(ctx, "eth", "btc")
 			if err != nil {
 				log.Fatalf("OKEX get eth-btc ticker failed, err: %v", err)
@@ -416,5 +418,22 @@ func main() {
 
 			log.Infof("OKEX ETH-BTC Ticker: %+v", ethTicker)
 		}
+	}
+
+	{
+		// gate.io
+		c := gateio.New("", "")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		{
+			pairs, err := c.GetPairs(ctx)
+			if err != nil {
+				log.Fatalf("gate.io get pairs failed, err: %v", err)
+			}
+
+			log.Infof("gate.io pairs: %+v", pairs)
+		}
+
 	}
 }
