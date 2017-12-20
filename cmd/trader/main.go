@@ -435,13 +435,22 @@ func main() {
 			log.Infof("gate.io pairs: %+v", pairs)
 		}
 
-		{
+		if false {
 			marketInfo, err := c.GetMarketInfo(ctx)
 			if err != nil {
 				log.Fatalf("gate.io get market_info failed, err: %v", err)
 			}
 
 			log.Infof("gate.io market_info: %+v", marketInfo)
+		}
+
+		{
+			ethTicker, err := c.GetTicker(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("gate.io get ticker failed, err: %v", err)
+			}
+
+			log.Infof("gate.io get ticker eth-btc: %+v", ethTicker)
 		}
 
 	}

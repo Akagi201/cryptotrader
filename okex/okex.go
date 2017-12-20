@@ -90,7 +90,6 @@ func (c *Client) getResponse(req *http.Request) ([]byte, error) {
 
 // GetTicker 获取OKEx最新币币行情数据, for Get /api/v1/ticker.do
 func (c *Client) GetTicker(ctx context.Context, quote string, base string) (*model.Ticker, error) {
-
 	v := url.Values{}
 	v.Set("symbol", strings.ToUpper(quote)+"_"+strings.ToUpper(base))
 

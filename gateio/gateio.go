@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/Akagi201/cryptotrader/model"
 	"github.com/pkg/errors"
@@ -135,4 +136,36 @@ func (c *Client) GetMarketInfo(ctx context.Context) ([]model.MarketInfo, error) 
 	}
 
 	return marketInfos, nil
+}
+
+// GetTicker 返回最新, 最高, 最低 交易行情和交易量, 每 10 秒钟更新, for http://data.gate.io/api2/1/ticker/[quote]_[base]
+func (c *Client) GetTicker(ctx context.Context, quote string, base string) (*model.Ticker, error) {
+	req, err := c.newRequest(ctx, "GET", "ticker/"+strings.ToUpper(quote)+"_"+strings.ToUpper(base), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	buy := gjson.GetBytes(body, "highestBid").Float()
+	sell := gjson.GetBytes(body, "lowestAsk").Float()
+	last := gjson.GetBytes(body, "last").Float()
+	low := gjson.GetBytes(body, "low24hr").Float()
+	high := gjson.GetBytes(body, "high24hr").Float()
+	vol := gjson.GetBytes(body, "baseVolume").Float()
+
+	return &model.Ticker{
+		Buy:  buy,
+		Sell: sell,
+		Last: last,
+		Low:  low,
+		High: high,
+		Vol:  vol,
+		Raw:  string(body),
+	}, nil
 }
