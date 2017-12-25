@@ -2,6 +2,7 @@
 package bigone
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -13,10 +14,12 @@ import (
 	"strings"
 
 	"github.com/Akagi201/cryptotrader/model"
+	"github.com/golang-plus/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
 
 const (
@@ -59,6 +62,25 @@ func (c *Client) newRequest(ctx context.Context, method string, spath string, va
 	}
 
 	req = req.WithContext(ctx)
+
+	return req, nil
+}
+
+func (c *Client) newPrivateRequest(ctx context.Context, method string, spath string, values url.Values, body io.Reader) (*http.Request, error) {
+	req, err := c.newRequest(ctx, method, spath, values, body)
+	if err != nil {
+		return nil, err
+	}
+
+	if values == nil {
+		values = url.Values{}
+	}
+
+	u, _ := uuid.NewTimeBased()
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.ApiKey))
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36")
+	req.Header.Set("Big-Device-Id", u.String())
+	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
 }
@@ -206,4 +228,37 @@ func (c *Client) GetTrades(ctx context.Context, quote string, base string) ([]mo
 	})
 
 	return trades, nil
+}
+
+// Trade Create an Order, side: BID or ASK, for POST https://api.big.one/orders
+func (c *Client) Trade(ctx context.Context, quote string, base string, side string, quantity float64, price float64) (string, error) {
+	reqBody := `{
+		"order_market": "ETH-BTC",
+		"order_side": "BID",
+		"price": "0.04",
+		"amount": "0.00001"
+	}`
+
+	reqBody, _ = sjson.Set(reqBody, "order_market", strings.ToUpper(quote)+"-"+strings.ToUpper(base))
+	reqBody, _ = sjson.Set(reqBody, "order_side", side)
+	reqBody, _ = sjson.Set(reqBody, "price", cast.ToString(price))
+	reqBody, _ = sjson.Set(reqBody, "amount", cast.ToString(quantity))
+
+	log.Debugf("reqBody: %v", reqBody)
+
+	reqBuf := bytes.NewBufferString(reqBody)
+
+	req, err := c.newPrivateRequest(ctx, "POST", "orders", nil, reqBuf)
+	if err != nil {
+		return "", err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return "", err
+	}
+
+	orderID := gjson.GetBytes(body, "data.order_id").String()
+
+	return orderID, err
 }

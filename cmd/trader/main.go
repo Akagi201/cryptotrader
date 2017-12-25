@@ -457,7 +457,7 @@ func main() {
 
 	{
 		// big.one
-		c := bigone.New("")
+		c := bigone.New("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDU3MDYxNDksImp0aSI6Ijc0NmFhY2RhLTcwODctNDJhZS1iZjc4LWZhYzM2ZmQ3NjRjOCJ9.yNWpO5nGNLtR4EC-gUE9TDz-5QHG6GV3VRg-g0BntCM:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDU3MDYxNDl9.yHjpYvjjCpSG-86pt7YQvqjKD6MvkGxvFAi2HVeTLRQ")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
@@ -479,13 +479,21 @@ func main() {
 			log.Infof("big.one get depth eth-btc: %+v", ethBook)
 		}
 
-		{
+		if false {
 			ethTrade, err := c.GetTrades(ctx, "eth", "btc")
 			if err != nil {
 				log.Fatalf("big.one get eth-btc trade failed, err: %v", err)
 			}
 
 			log.Infof("big.one get trade eth-btc: %+v", ethTrade)
+		}
+
+		{
+			id, err := c.Trade(ctx, "eth", "btc", "BID", 0.1, 0.04)
+			if err != nil {
+				log.Fatalf("big.one trade eth-btc failed, err: %v", err)
+			}
+			log.Infof("big.one trade eth-btc success, order id: %v", id)
 		}
 	}
 }
