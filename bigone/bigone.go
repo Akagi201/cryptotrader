@@ -291,7 +291,7 @@ func (c *Client) GetOrder(ctx context.Context, quote string, base string, orderI
 	return &order, nil
 }
 
-// GetOrders Get all open orders on a symbol, for GET /api/v3/openOrders
+// GetOrders Get all open orders on a symbol, for GET /orders{?market,limit}
 func (c *Client) GetOrders(ctx context.Context, quote string, base string, limit int64) ([]model.BigONEOrder, error) {
 	v := url.Values{}
 	v.Set("market", strings.ToUpper(quote)+"-"+strings.ToUpper(base))
@@ -313,14 +313,14 @@ func (c *Client) GetOrders(ctx context.Context, quote string, base string, limit
 	var orders []model.BigONEOrder
 
 	gjson.GetBytes(body, "data").ForEach(func(key, value gjson.Result) bool {
-		order.ID = value.Get("data.order_id").String()
-		order.Type = value.Get("data.order_type").String()
-		order.Side = value.Get("data.order_side").String()
-		order.Status = value.Get("data.order_state").String()
-		order.Price = cast.ToFloat64(value.Get("data.price").String())
-		order.Amount = cast.ToFloat64(value.Get("data.amount").String())
-		order.DealAmount = cast.ToFloat64(value.Get("data.filled_amount").String())
-		order.Time = cast.ToTime(value.Get("data.updated_at").String())
+		order.ID = value.Get("order_id").String()
+		order.Type = value.Get("order_type").String()
+		order.Side = value.Get("order_side").String()
+		order.Status = value.Get("order_state").String()
+		order.Price = cast.ToFloat64(value.Get("price").String())
+		order.Amount = cast.ToFloat64(value.Get("amount").String())
+		order.DealAmount = cast.ToFloat64(value.Get("filled_amount").String())
+		order.Time = cast.ToTime(value.Get("updated_at").String())
 		order.Raw = string(body)
 
 		orders = append(orders, order)
