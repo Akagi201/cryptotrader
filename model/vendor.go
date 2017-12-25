@@ -18,3 +18,13 @@ type ZBOrder struct {
 	TradeMoney  float64   // 已成交总金额
 	Type        int64     // 挂单类型 1/0[buy/sell]
 }
+
+// BigONE Ticker
+type BigONETicker struct {
+	Last  float64
+	Open  float64
+	Close float64
+	High  float64
+	Low   float64
+	Vol   float64
+}

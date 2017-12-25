@@ -24,9 +24,9 @@ A cryptocurrency trader for all famous exchanges.
 - [x] allcoin
 - [x] cex
 - [x] okex
+- [ ] bigone
 - [ ] exx
 - [ ] kucoin
-- [ ] bigone
 - [ ] gate.io
 
 ### Others

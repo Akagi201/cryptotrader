@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Akagi201/cryptotrader/allcoin"
+	"github.com/Akagi201/cryptotrader/bigone"
 	"github.com/Akagi201/cryptotrader/binance"
 	"github.com/Akagi201/cryptotrader/bitfinex"
 	"github.com/Akagi201/cryptotrader/bitflyer"
@@ -420,7 +421,7 @@ func main() {
 		}
 	}
 
-	{
+	if false {
 		// gate.io
 		c := gateio.New("", "")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -452,6 +453,21 @@ func main() {
 
 			log.Infof("gate.io get ticker eth-btc: %+v", ethTicker)
 		}
+	}
 
+	{
+		// big.one
+		c := bigone.New("")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		{
+			ethTicker, err := c.GetTicker(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("big.one get ticker failed, err: %v", err)
+			}
+
+			log.Infof("big.one get ticker eth-btc: %+v", ethTicker)
+		}
 	}
 }
