@@ -328,3 +328,20 @@ func (c *Client) GetOrders(ctx context.Context, quote string, base string, limit
 	})
 	return orders, nil
 }
+
+// CancelOrder Cancel an Order for DELETE https://api.big.one/orders/{id}
+func (c *Client) CancelOrder(ctx context.Context, quote string, base string, orderID string) error {
+	req, err := c.newPrivateRequest(ctx, "DELETE", "orders/"+strings.ToUpper(quote)+"-"+strings.ToUpper(base), nil, nil)
+	if err != nil {
+		return err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	return nil
+}

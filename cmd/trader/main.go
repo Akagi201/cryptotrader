@@ -506,6 +506,12 @@ func main() {
 				log.Fatalf("big.one get orders eth-btc failed, err: %v", err)
 			}
 			log.Infof("big.one get orders eth-btc success, orders: %+v", orders)
+
+			err = c.CancelOrder(ctx, "eth", "btc", id)
+			if err != nil {
+				log.Fatalf("big.one cancel order eth-btc failed, err: %v", err)
+			}
+			log.Info("big.one cancel order eth-btc success")
 		}
 	}
 }
