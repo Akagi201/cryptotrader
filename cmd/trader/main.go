@@ -461,13 +461,22 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		{
+		if false {
 			ethTicker, err := c.GetTicker(ctx, "eth", "btc")
 			if err != nil {
 				log.Fatalf("big.one get ticker failed, err: %v", err)
 			}
 
 			log.Infof("big.one get ticker eth-btc: %+v", ethTicker)
+		}
+
+		{
+			ethBook, err := c.GetDepth(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("big.one get eth-btc depth failed, err: %v", err)
+			}
+
+			log.Infof("big.one get depth eth-btc: %+v", ethBook)
 		}
 	}
 }

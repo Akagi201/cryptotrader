@@ -15,6 +15,7 @@ import (
 	"github.com/Akagi201/cryptotrader/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
 )
 
@@ -143,4 +144,37 @@ func (c *Client) GetTicker(ctx context.Context, quote string, base string) (*mod
 		High:  high,
 		Vol:   vol,
 	}, nil
+}
+
+// GetDepth Order book, for GET https://api.big.one/markets/{symbol}/book
+func (c *Client) GetDepth(ctx context.Context, quote string, base string) (*model.OrderBook, error) {
+	req, err := c.newRequest(ctx, "GET", "markets/"+strings.ToUpper(quote)+"-"+strings.ToUpper(base)+"/book", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var order model.MarketOrder
+	var orderBook model.OrderBook
+	gjson.GetBytes(body, "data.bids").ForEach(func(key, value gjson.Result) bool {
+		order.Price = cast.ToFloat64(value.Get("price").String())
+		order.Amount = cast.ToFloat64(value.Get("amount").String())
+		orderBook.Bids = append(orderBook.Bids, order)
+		return true // keep iterating
+	})
+
+	gjson.GetBytes(body, "data.asks").ForEach(func(key, value gjson.Result) bool {
+		order.Price = cast.ToFloat64(value.Get("price").String())
+		order.Amount = cast.ToFloat64(value.Get("amount").String())
+		orderBook.Asks = append(orderBook.Asks, order)
+		return true // keep iterating
+	})
+
+	return &orderBook, nil
 }
