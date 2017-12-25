@@ -345,3 +345,31 @@ func (c *Client) CancelOrder(ctx context.Context, quote string, base string, ord
 
 	return nil
 }
+
+// GetAccount List Accounts of Current User, for GET https://api.big.one/accounts
+func (c *Client) GetAccount(ctx context.Context) ([]model.Balance, error) {
+	req, err := c.newPrivateRequest(ctx, "GET", "accounts", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var balance model.Balance
+	var balances []model.Balance
+	gjson.GetBytes(body, "data").ForEach(func(key, value gjson.Result) bool {
+		balance.Currency = value.Get("account_type").String()
+		balance.Free = cast.ToFloat64(value.Get("active_balance").String())
+		balance.Frozen = cast.ToFloat64(value.Get("frozen_balance").String())
+
+		balances = append(balances, balance)
+		return true // keep iterating
+	})
+
+	return balances, nil
+}

@@ -488,7 +488,7 @@ func main() {
 			log.Infof("big.one get trade eth-btc: %+v", ethTrade)
 		}
 
-		{
+		if false {
 			id, err := c.Trade(ctx, "eth", "btc", "BID", 0.1, 0.04)
 			if err != nil {
 				log.Fatalf("big.one trade eth-btc failed, err: %v", err)
@@ -512,6 +512,14 @@ func main() {
 				log.Fatalf("big.one cancel order eth-btc failed, err: %v", err)
 			}
 			log.Info("big.one cancel order eth-btc success")
+		}
+
+		{
+			balance, err := c.GetAccount(ctx)
+			if err != nil {
+				log.Fatalf("big.one get balance failed, err: %v", err)
+			}
+			log.Infof("big.one get balance: %+v", balance)
 		}
 	}
 }
