@@ -178,3 +178,32 @@ func (c *Client) GetDepth(ctx context.Context, quote string, base string) (*mode
 
 	return &orderBook, nil
 }
+
+// GetTrades List Trades in the Market, for GET https://api.big.one/markets/{symbol}/trades
+func (c *Client) GetTrades(ctx context.Context, quote string, base string) ([]model.BigONETrade, error) {
+	req, err := c.newRequest(ctx, "GET", "markets/"+strings.ToUpper(quote)+"-"+strings.ToUpper(base)+"/trades", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var trade model.BigONETrade
+	var trades []model.BigONETrade
+	gjson.GetBytes(body, "data").ForEach(func(key, value gjson.Result) bool {
+		trade.ID = value.Get("trade_id").String()
+		trade.Price = cast.ToFloat64(value.Get("price").String())
+		trade.Amount = cast.ToFloat64(value.Get("amount").String())
+		trade.Type = value.Get("trade_side").String()
+		trade.Time = cast.ToTime(value.Get("created_at").String())
+		trades = append(trades, trade)
+		return true // keep iterating
+	})
+
+	return trades, nil
+}

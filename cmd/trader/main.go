@@ -470,13 +470,22 @@ func main() {
 			log.Infof("big.one get ticker eth-btc: %+v", ethTicker)
 		}
 
-		{
+		if false {
 			ethBook, err := c.GetDepth(ctx, "eth", "btc")
 			if err != nil {
 				log.Fatalf("big.one get eth-btc depth failed, err: %v", err)
 			}
 
 			log.Infof("big.one get depth eth-btc: %+v", ethBook)
+		}
+
+		{
+			ethTrade, err := c.GetTrades(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("big.one get eth-btc trade failed, err: %v", err)
+			}
+
+			log.Infof("big.one get trade eth-btc: %+v", ethTrade)
 		}
 	}
 }

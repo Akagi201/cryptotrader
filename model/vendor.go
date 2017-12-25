@@ -28,3 +28,12 @@ type BigONETicker struct {
 	Low   float64
 	Vol   float64
 }
+
+// BigONE Trade
+type BigONETrade struct {
+	ID     string
+	Type   string
+	Price  float64
+	Amount float64
+	Time   time.Time
+}
