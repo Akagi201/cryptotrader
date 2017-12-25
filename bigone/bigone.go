@@ -262,3 +262,69 @@ func (c *Client) Trade(ctx context.Context, quote string, base string, side stri
 
 	return orderID, err
 }
+
+// GetOrder Check an order's status, for GET /api/v3/order
+func (c *Client) GetOrder(ctx context.Context, quote string, base string, orderID string) (*model.BigONEOrder, error) {
+	req, err := c.newPrivateRequest(ctx, "GET", "orders/"+orderID, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var order model.BigONEOrder
+	order.ID = gjson.GetBytes(body, "data.order_id").String()
+	order.Type = gjson.GetBytes(body, "data.order_type").String()
+	order.Side = gjson.GetBytes(body, "data.order_side").String()
+	order.Status = gjson.GetBytes(body, "data.order_state").String()
+	order.Price = cast.ToFloat64(gjson.GetBytes(body, "data.price").String())
+	order.Amount = cast.ToFloat64(gjson.GetBytes(body, "data.amount").String())
+	order.DealAmount = cast.ToFloat64(gjson.GetBytes(body, "data.filled_amount").String())
+	order.Time = cast.ToTime(gjson.GetBytes(body, "data.updated_at").String())
+	order.Raw = string(body)
+
+	return &order, nil
+}
+
+// GetOrders Get all open orders on a symbol, for GET /api/v3/openOrders
+func (c *Client) GetOrders(ctx context.Context, quote string, base string, limit int64) ([]model.BigONEOrder, error) {
+	v := url.Values{}
+	v.Set("market", strings.ToUpper(quote)+"-"+strings.ToUpper(base))
+	v.Set("limit", cast.ToString(limit))
+
+	req, err := c.newPrivateRequest(ctx, "GET", "orders", v, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var order model.BigONEOrder
+	var orders []model.BigONEOrder
+
+	gjson.GetBytes(body, "data").ForEach(func(key, value gjson.Result) bool {
+		order.ID = value.Get("data.order_id").String()
+		order.Type = value.Get("data.order_type").String()
+		order.Side = value.Get("data.order_side").String()
+		order.Status = value.Get("data.order_state").String()
+		order.Price = cast.ToFloat64(value.Get("data.price").String())
+		order.Amount = cast.ToFloat64(value.Get("data.amount").String())
+		order.DealAmount = cast.ToFloat64(value.Get("data.filled_amount").String())
+		order.Time = cast.ToTime(value.Get("data.updated_at").String())
+		order.Raw = string(body)
+
+		orders = append(orders, order)
+		return true // keep iterating
+	})
+	return orders, nil
+}

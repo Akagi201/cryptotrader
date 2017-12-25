@@ -457,7 +457,7 @@ func main() {
 
 	{
 		// big.one
-		c := bigone.New("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDU3MDYxNDksImp0aSI6Ijc0NmFhY2RhLTcwODctNDJhZS1iZjc4LWZhYzM2ZmQ3NjRjOCJ9.yNWpO5nGNLtR4EC-gUE9TDz-5QHG6GV3VRg-g0BntCM:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDU3MDYxNDl9.yHjpYvjjCpSG-86pt7YQvqjKD6MvkGxvFAi2HVeTLRQ")
+		c := bigone.New("")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
@@ -494,6 +494,18 @@ func main() {
 				log.Fatalf("big.one trade eth-btc failed, err: %v", err)
 			}
 			log.Infof("big.one trade eth-btc success, order id: %v", id)
+
+			order, err := c.GetOrder(ctx, "eth", "btc", id)
+			if err != nil {
+				log.Fatalf("big.one get order eth-btc failed, err: %v", err)
+			}
+			log.Infof("big.one get order eth-btc success, order id: %v", order)
+
+			orders, err := c.GetOrders(ctx, "eth", "btc", 10)
+			if err != nil {
+				log.Fatalf("big.one get orders eth-btc failed, err: %v", err)
+			}
+			log.Infof("big.one get orders eth-btc success, orders: %+v", orders)
 		}
 	}
 }

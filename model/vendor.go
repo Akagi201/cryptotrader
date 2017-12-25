@@ -37,3 +37,16 @@ type BigONETrade struct {
 	Amount float64
 	Time   time.Time
 }
+
+// BigONE Order
+type BigONEOrder struct {
+	ID         string
+	Amount     float64
+	DealAmount float64
+	Price      float64
+	Status     string
+	Type       string
+	Side       string
+	Time       time.Time
+	Raw        string
+}
