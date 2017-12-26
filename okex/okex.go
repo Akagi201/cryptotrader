@@ -15,6 +15,7 @@ import (
 	"github.com/Akagi201/cryptotrader/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
 )
 
@@ -91,7 +92,7 @@ func (c *Client) getResponse(req *http.Request) ([]byte, error) {
 // GetTicker 获取OKEx最新币币行情数据, for Get /api/v1/ticker.do
 func (c *Client) GetTicker(ctx context.Context, quote string, base string) (*model.Ticker, error) {
 	v := url.Values{}
-	v.Set("symbol", strings.ToUpper(quote)+"_"+strings.ToUpper(base))
+	v.Set("symbol", strings.ToLower(quote)+"_"+strings.ToLower(base))
 
 	req, err := c.newRequest(ctx, "GET", "ticker.do", v, nil)
 	if err != nil {
@@ -150,4 +151,72 @@ func (c *Client) GetTicker(ctx context.Context, quote string, base string) (*mod
 		Vol:  vol,
 		Raw:  string(body),
 	}, nil
+}
+
+// GetDepth 获取币币市场深度, for Get /api/v1/depth
+func (c *Client) GetDepth(ctx context.Context, quote string, base string) (*model.OrderBook, error) {
+	v := url.Values{}
+	v.Set("symbol", strings.ToLower(quote)+"_"+strings.ToLower(base))
+
+	req, err := c.newRequest(ctx, "GET", "depth.do", v, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var order model.MarketOrder
+	var orderBook model.OrderBook
+	gjson.GetBytes(body, "bids").ForEach(func(key, value gjson.Result) bool {
+		order.Price = value.Array()[0].Float()
+		order.Amount = value.Array()[1].Float()
+		orderBook.Bids = append(orderBook.Bids, order)
+		return true // keep iterating
+	})
+
+	gjson.GetBytes(body, "asks").ForEach(func(key, value gjson.Result) bool {
+		order.Price = value.Array()[0].Float()
+		order.Amount = value.Array()[1].Float()
+		orderBook.Asks = append(orderBook.Asks, order)
+		return true // keep iterating
+	})
+
+	return &orderBook, nil
+}
+
+// GetTrades 获取币币交易信息, for GET https://www.okex.com/api/v1/trades.do
+func (c *Client) GetTrades(ctx context.Context, quote string, base string) ([]model.Trade, error) {
+	v := url.Values{}
+	v.Set("symbol", strings.ToLower(quote)+"_"+strings.ToLower(base))
+
+	req, err := c.newRequest(ctx, "GET", "trades.do", v, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var trade model.Trade
+	var trades []model.Trade
+	gjson.ParseBytes(body).ForEach(func(key, value gjson.Result) bool {
+		trade.ID = cast.ToInt64(value.Get("tid").String())
+		trade.Price = value.Get("price").Float()
+		trade.Amount = value.Get("amount").Float()
+		trade.Type = value.Get("type").String()
+		trade.Time = cast.ToTime(cast.ToInt64(value.Get("date").String()))
+		trades = append(trades, trade)
+		return true // keep iterating
+	})
+
+	return trades, nil
 }

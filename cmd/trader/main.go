@@ -404,7 +404,7 @@ func main() {
 		}
 	}
 
-	if false {
+	{
 		// OKEX
 		c := okex.New("", "")
 
@@ -418,6 +418,24 @@ func main() {
 			}
 
 			log.Infof("OKEX ETH-BTC Ticker: %+v", ethTicker)
+		}
+
+		if false {
+			ethDepth, err := c.GetDepth(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("OKEX get eth-btc depth failed, err: %v", err)
+			}
+
+			log.Infof("OKEX ETH-BTC depth: %+v", ethDepth)
+		}
+
+		{
+			ethTrades, err := c.GetTrades(ctx, "eth", "btc")
+			if err != nil {
+				log.Fatalf("OKEX get eth-btc trades failed, err: %v", err)
+			}
+
+			log.Infof("OKEX ETH-BTC trades: %+v", ethTrades)
 		}
 	}
 
@@ -455,7 +473,7 @@ func main() {
 		}
 	}
 
-	{
+	if false {
 		// big.one
 		c := bigone.New("")
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -488,7 +506,7 @@ func main() {
 			log.Infof("big.one get trade eth-btc: %+v", ethTrade)
 		}
 
-		{
+		if false {
 			id, err := c.Trade(ctx, "eth", "btc", "BID", 0.1, 0.04)
 			if err != nil {
 				log.Fatalf("big.one trade eth-btc failed, err: %v", err)
