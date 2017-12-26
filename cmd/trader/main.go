@@ -429,13 +429,22 @@ func main() {
 			log.Infof("OKEX ETH-BTC depth: %+v", ethDepth)
 		}
 
-		{
+		if false {
 			ethTrades, err := c.GetTrades(ctx, "eth", "btc")
 			if err != nil {
 				log.Fatalf("OKEX get eth-btc trades failed, err: %v", err)
 			}
 
 			log.Infof("OKEX ETH-BTC trades: %+v", ethTrades)
+		}
+
+		{
+			ethKline, err := c.GetRecords(ctx, "eth", "btc", "1min", 0, 0)
+			if err != nil {
+				log.Fatalf("OKEX get eth-btc kline failed, err: %v", err)
+			}
+
+			log.Infof("OKEX ETH-BTC kline: %+v", ethKline)
 		}
 	}
 

@@ -220,3 +220,46 @@ func (c *Client) GetTrades(ctx context.Context, quote string, base string) ([]mo
 
 	return trades, nil
 }
+
+// GetRecords 获取币币K线数据, for GET https://www.okex.com/api/v1/kline.do
+func (c *Client) GetRecords(ctx context.Context, quote string, base string, interval string, since int64, limit int64) ([]model.Record, error) {
+	v := url.Values{}
+	v.Set("symbol", strings.ToLower(quote)+"_"+strings.ToLower(base))
+	v.Set("type", interval)
+
+	if since != 0 {
+		v.Set("startTime", strconv.FormatInt(since, 10))
+	}
+
+	if limit != 0 {
+		v.Set("limit", strconv.FormatInt(limit, 10))
+	}
+
+	req, err := c.newRequest(ctx, "GET", "kline.do", v, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Debugf("Response body: %v", string(body))
+
+	var record model.Record
+	var records []model.Record
+
+	gjson.ParseBytes(body).ForEach(func(key, value gjson.Result) bool {
+		record.Open = value.Array()[1].Float()
+		record.High = value.Array()[2].Float()
+		record.Low = value.Array()[3].Float()
+		record.Close = value.Array()[4].Float()
+		record.Vol = value.Array()[5].Float()
+		record.Time = cast.ToTime(value.Array()[0].Int() / 1000)
+		record.Raw = value.String()
+		records = append(records, record)
+		return true // keep iterating
+	})
+	return records, nil
+}
