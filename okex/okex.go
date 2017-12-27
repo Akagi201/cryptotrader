@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/Akagi201/cryptotrader/model"
+	"github.com/Akagi201/utilgo/signs"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
@@ -62,6 +63,39 @@ func (c *Client) newRequest(ctx context.Context, method string, spath string, va
 	}
 
 	req = req.WithContext(ctx)
+
+	return req, nil
+}
+
+func (c *Client) SignParams(values *url.Values) error {
+	values.Set("api_key", c.AccessKey)
+	payload := values.Encode()
+	payload = payload + "&secret_key=" + c.SecretKey
+	//payload, _ = url.QueryUnescape(payload)
+
+	sign, err := signs.GetMd5Sign(payload)
+	if err != nil {
+		return err
+	}
+
+	values.Add("sign", strings.ToUpper(sign))
+	return nil
+}
+
+func (c *Client) newPrivateRequest(ctx context.Context, method string, spath string, values url.Values, body io.Reader) (*http.Request, error) {
+	if values == nil {
+		values = url.Values{}
+	}
+
+	c.SignParams(&values)
+	//req.URL.RawQuery = values.Encode()
+
+	log.Debugf("Encode values: %v", values.Encode())
+
+	req, err := c.newRequest(ctx, method, spath, values, body)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -262,4 +296,33 @@ func (c *Client) GetRecords(ctx context.Context, quote string, base string, inte
 		return true // keep iterating
 	})
 	return records, nil
+}
+
+// GetAccount 获取用户信息, for POST https://www.okex.com/api/v1/userinfo.do
+func (c *Client) GetAccount(ctx context.Context) ([]model.Balance, error) {
+	req, err := c.newPrivateRequest(ctx, "POST", "userinfo.do", nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := c.getResponse(req)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Infof("Response body: %v", string(body))
+
+	//var balance model.Balance
+	//var balances []model.Balance
+	//gjson.GetBytes(body, "data").ForEach(func(key, value gjson.Result) bool {
+	//	balance.Currency = value.Get("account_type").String()
+	//	balance.Free = cast.ToFloat64(value.Get("active_balance").String())
+	//	balance.Frozen = cast.ToFloat64(value.Get("frozen_balance").String())
+	//
+	//	balances = append(balances, balance)
+	//	return true // keep iterating
+	//})
+
+	//return balances, nil
+	return nil, nil
 }

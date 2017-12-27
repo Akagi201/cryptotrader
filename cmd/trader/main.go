@@ -438,13 +438,21 @@ func main() {
 			log.Infof("OKEX ETH-BTC trades: %+v", ethTrades)
 		}
 
-		{
+		if false {
 			ethKline, err := c.GetRecords(ctx, "eth", "btc", "1min", 0, 0)
 			if err != nil {
 				log.Fatalf("OKEX get eth-btc kline failed, err: %v", err)
 			}
 
 			log.Infof("OKEX ETH-BTC kline: %+v", ethKline)
+		}
+
+		{
+			balance, err := c.GetAccount(ctx)
+			if err != nil {
+				log.Fatalf("OKEX get balance failed, err: %v", err)
+			}
+			log.Infof("OKEX balance: %+v", balance)
 		}
 	}
 
