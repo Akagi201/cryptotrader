@@ -3,9 +3,6 @@ package binance
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -19,6 +16,7 @@ import (
 
 	"github.com/Akagi201/cryptotrader/model"
 	"github.com/Akagi201/utilgo/enums"
+	"github.com/Akagi201/utilgo/signs"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/tidwall/gjson"
@@ -114,13 +112,6 @@ func (c *Client) newRequest(ctx context.Context, method string, spath string, va
 	return req, nil
 }
 
-// Sign sign the params with a secret key
-func (c *Client) Sign(secretKey string, totalParams string) string {
-	mac := hmac.New(sha256.New, []byte(secretKey))
-	mac.Write([]byte(totalParams))
-	return hex.EncodeToString(mac.Sum(nil))
-}
-
 func (c *Client) newPrivateRequest(ctx context.Context, method string, spath string, values url.Values, body io.Reader, recvWindow int64) (*http.Request, error) {
 	req, err := c.newRequest(ctx, method, spath, values, body, ApiV3)
 	if err != nil {
@@ -150,7 +141,8 @@ func (c *Client) newPrivateRequest(ctx context.Context, method string, spath str
 		values.Set("recvWindow", "5000")
 	}
 
-	sign := c.Sign(c.SecretKey, values.Encode())
+	sign, _ := signs.GetSha256Sign(c.SecretKey, values.Encode())
+
 	values.Add("signature", sign)
 
 	req.Header.Set("X-MBX-APIKEY", c.AccessKey)

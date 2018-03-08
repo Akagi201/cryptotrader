@@ -22,6 +22,7 @@ import (
 	"github.com/Akagi201/cryptotrader/okcoin"
 	"github.com/Akagi201/cryptotrader/okex"
 	"github.com/Akagi201/cryptotrader/poloniex"
+	"github.com/Akagi201/cryptotrader/util"
 	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
@@ -253,19 +254,20 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	if false {
-		rc := binance.New("", "")
+	{
+		// binance
+		rc := binance.New("xBhrsdymp92w3yTIf20x2TOs39fyyCM4TgeJCtbKuWQe1Rx2nCh2y6rDl1G5u5Th", "bC08CbIl5wBfVYJgrGkYgSl8dJ6JXVoqT57uLTstYyOj9ZUwo8r3dejHdonToiVw")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
 		if false {
-			zrxTicker, err := rc.GetTicker(ctx, "zrx", "btc")
+			ethTicker, err := rc.GetTicker(ctx, "eth", "btc")
 			if err != nil {
-				log.Fatalf("Binance get ticker failed, err: %v", err)
+				log.Fatalf("Binance get ETH-BTC ticker failed, err: %v", err)
 			}
 
-			log.Infof("ZRX Ticker: %+v", zrxTicker)
+			log.Infof("ETH-BTC Ticker: %+v", ethTicker)
 		}
 
 		if false {
@@ -340,11 +342,12 @@ func main() {
 			log.Infof("Get book tickers: %+v", bookTickers)
 		}
 
-		if false {
+		{
 			account, err := rc.GetAccount(ctx, 0)
 			if err != nil {
 				log.Fatalf("Get account failed, err: %v", err)
 			}
+			account = util.GetNonZeroBalance(account)
 
 			log.Infof("Get account: %+v", account)
 		}
@@ -404,7 +407,7 @@ func main() {
 		}
 	}
 
-	{
+	if false {
 		// OKEX
 		c := okex.New("", "")
 
