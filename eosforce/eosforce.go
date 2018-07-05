@@ -83,7 +83,7 @@ func (ef *EosForce) getResponse(req *http.Request) ([]byte, error) {
 }
 
 // GetAvailable 获取指定账户可用余额
-func (ef *EosForce) GetAvailable(ctx context.Context, name string) (float64, error) {
+func (ef *EosForce) GetAvailable(ctx context.Context, account string) (float64, error) {
 	reqBody := `{
 		"scope": "eosio",
 		"code": "eosio",
@@ -93,7 +93,7 @@ func (ef *EosForce) GetAvailable(ctx context.Context, name string) (float64, err
 		"limit": 1
 	}`
 
-	reqBody, _ = sjson.Set(reqBody, "table_key", name)
+	reqBody, _ = sjson.Set(reqBody, "table_key", account)
 
 	reqBuf := bytes.NewBufferString(reqBody)
 
@@ -107,13 +107,46 @@ func (ef *EosForce) GetAvailable(ctx context.Context, name string) (float64, err
 		return -1, err
 	}
 
-	log.Infof("body: %v", string(body))
-
 	if gjson.GetBytes(body, "rows.#").Int() == 0 {
 		return -1, errors.New("account not found")
 	}
 
 	available := gjson.GetBytes(body, "rows.0").Get("available").String()
+
+	return cast.ToFloat64(strings.Split(available, " ")[0]), nil
+}
+
+// GetStaked 获取指定账户投票金额
+func (ef *EosForce) GetStaked(ctx context.Context, account string, bp string) (float64, error) {
+	reqBody := `{
+		"scope": "%s",
+		"code": "eosio",
+		"table": "votes",
+        "json": true,
+        "table_key": "%s",
+		"limit": 1
+	}`
+
+	reqBody, _ = sjson.Set(reqBody, "scope", account)
+	reqBody, _ = sjson.Set(reqBody, "table_key", bp)
+
+	reqBuf := bytes.NewBufferString(reqBody)
+
+	req, err := ef.newRequest(ctx, "POST", "chain/get_table_rows", nil, reqBuf)
+	if err != nil {
+		return -1, err
+	}
+
+	body, err := ef.getResponse(req)
+	if err != nil {
+		return -1, err
+	}
+
+	if gjson.GetBytes(body, "rows.#").Int() == 0 {
+		return -1, errors.New("account not found")
+	}
+
+	available := gjson.GetBytes(body, "rows.0").Get("staked").String()
 
 	return cast.ToFloat64(strings.Split(available, " ")[0]), nil
 }
