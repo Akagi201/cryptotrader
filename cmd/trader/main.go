@@ -13,6 +13,7 @@ import (
 	"github.com/Akagi201/cryptotrader/cex"
 	"github.com/Akagi201/cryptotrader/coincheck"
 	"github.com/Akagi201/cryptotrader/coinegg"
+	"github.com/Akagi201/cryptotrader/eosforce"
 	"github.com/Akagi201/cryptotrader/etherscan"
 	"github.com/Akagi201/cryptotrader/fixer"
 	"github.com/Akagi201/cryptotrader/gateio"
@@ -254,7 +255,7 @@ func main() {
 		log.Infof("Get ticker: %+v", ticker)
 	}
 
-	{
+	if false {
 		// binance
 		rc := binance.New("xBhrsdymp92w3yTIf20x2TOs39fyyCM4TgeJCtbKuWQe1Rx2nCh2y6rDl1G5u5Th", "bC08CbIl5wBfVYJgrGkYgSl8dJ6JXVoqT57uLTstYyOj9ZUwo8r3dejHdonToiVw")
 
@@ -558,6 +559,21 @@ func main() {
 				log.Fatalf("big.one get balance failed, err: %v", err)
 			}
 			log.Infof("big.one get balance: %+v", balance)
+		}
+	}
+
+	{
+		c := eosforce.New([]string{"docker", "exec", "eosforce", "cleos"}, "https", "w2.eosforce.cn")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		{
+			available, err := c.GetAvailable(ctx, "blockgw")
+			if err != nil {
+				log.Fatalf("eosforce get available balance failed, err: %v", err)
+			}
+
+			log.Infof("eosforce available balance: %+v", available)
 		}
 	}
 }
