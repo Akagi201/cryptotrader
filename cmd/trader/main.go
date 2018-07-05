@@ -584,5 +584,14 @@ func main() {
 
 			log.Infof("eosforce staked balance: %+v", staked)
 		}
+
+		{
+			staked, err := c.GetUnstaking(ctx, "kuso", "blockgw")
+			if err != nil {
+				log.Fatalf("eosforce get unstaking balance failed, err: %v", err)
+			}
+
+			log.Infof("eosforce unstaking balance: %+v", staked)
+		}
 	}
 }

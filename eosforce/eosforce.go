@@ -150,3 +150,38 @@ func (ef *EosForce) GetStaked(ctx context.Context, account string, bp string) (f
 
 	return cast.ToFloat64(strings.Split(available, " ")[0]), nil
 }
+
+// GetUnstaking 获取指定账户赎回金额
+func (ef *EosForce) GetUnstaking(ctx context.Context, account string, bp string) (float64, error) {
+	reqBody := `{
+		"scope": "%s",
+		"code": "eosio",
+		"table": "votes",
+        "json": true,
+        "table_key": "%s",
+		"limit": 1
+	}`
+
+	reqBody, _ = sjson.Set(reqBody, "scope", account)
+	reqBody, _ = sjson.Set(reqBody, "table_key", bp)
+
+	reqBuf := bytes.NewBufferString(reqBody)
+
+	req, err := ef.newRequest(ctx, "POST", "chain/get_table_rows", nil, reqBuf)
+	if err != nil {
+		return -1, err
+	}
+
+	body, err := ef.getResponse(req)
+	if err != nil {
+		return -1, err
+	}
+
+	if gjson.GetBytes(body, "rows.#").Int() == 0 {
+		return -1, errors.New("account not found")
+	}
+
+	available := gjson.GetBytes(body, "rows.0").Get("unstaking").String()
+
+	return cast.ToFloat64(strings.Split(available, " ")[0]), nil
+}
