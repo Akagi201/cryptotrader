@@ -41,6 +41,9 @@ A cryptocurrency trader for all famous exchanges.
 ## Data API
 - [x] etherscan
 
+## BlockChain
+- [x] EosForce
+
 ## Forex
 - [x] fixer.io
 
