@@ -19,6 +19,7 @@ type AccountBalance struct {
 }
 
 var balances []AccountBalance
+var fuckingGuys []string
 
 func main() {
 
@@ -29,22 +30,21 @@ func main() {
 	}
 
 	c := eosforce.New([]string{"docker", "exec", "eosforce", "cleos"}, Opts.RpcScheme, Opts.RpcHost)
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
-	defer cancel()
 
 	for {
 		for i, v := range balances {
-			available, err := c.GetAvailable(ctx, v.Name)
+			available, err := c.GetAvailable(context.Background(), v.Name)
 			if err != nil {
 				log.Fatalf("eosforce get available balance failed, err: %v", err)
 			}
 			if available != v.Available {
 				log.Infof("Fucking Guy %v is dumping! before: %v, after: %v, diff: %v", v.Name, v.Available, available, v.Available-available)
 				balances[i].Available = available
+				fuckingGuys = append(fuckingGuys, v.Name)
 			}
-			log.Infof("Getting account %v", v.Name)
-			time.Sleep(Opts.Interval * time.Second)
+			time.Sleep(1 * time.Second)
 		}
+		log.Infof("Fucking Guys: %v", fuckingGuys)
 		time.Sleep(2*time.Minute)
 	}
 }

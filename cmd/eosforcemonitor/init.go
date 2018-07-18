@@ -16,7 +16,6 @@ var Opts struct {
 	AccountFile string        `long:"account-file" default:"accounts.json" description:"account file"`
 	RpcScheme   string        `long:"rpc-scheme" default:"https" description:"rpc scheme"`
 	RpcHost     string        `long:"rpc-host" default:"w2.eosforce.cn" description:"rpc host"`
-	Interval    time.Duration `long:"interval" default:"1" description:"interval"`
 	LogLevel    string        `long:"log-level" default:"info" description:"Adjust the log level. Valid options are: error, warn, info, debug"`
 }
 
