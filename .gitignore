@@ -19,3 +19,5 @@
 /cmd/yunbimonitor/yunbimonitor
 /cmd/marketmaker/marketmaker
 /cmd/tradebot/tradebot
+/cmd/eosforcemonitor/eosforcemonitor
+/cmd/eosforcemonitor/accounts.json
