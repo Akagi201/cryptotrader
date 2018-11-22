@@ -28,6 +28,7 @@ A cryptocurrency trader for all famous exchanges.
 - [ ] exx
 - [ ] kucoin
 - [ ] gate.io
+- [ ] abcc
 
 ### Others
 - [x] bittrex
@@ -37,6 +38,7 @@ A cryptocurrency trader for all famous exchanges.
 - [x] coincheck
 - [x] bitflyer
 - [ ] etherdelta
+- [ ] 0x
 
 ## Data API
 - [x] etherscan
