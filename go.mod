@@ -3,6 +3,7 @@ module github.com/Akagi201/cryptotrader
 go 1.15
 
 require (
+	4d63.com/tz v1.2.0
 	github.com/Akagi201/coincheckgo v0.0.0-20170919035128-7690f21ea616
 	github.com/Akagi201/esalert v0.0.0-20181206105823-a7d1f21ff592
 	github.com/Akagi201/utilgo v0.0.0-20180502032714-e0aed8b5a58b
@@ -25,5 +26,6 @@ require (
 	github.com/spf13/cast v1.3.1
 	github.com/tidwall/gjson v1.6.1
 	github.com/tidwall/sjson v1.1.1
+	google.golang.org/appengine v1.6.6
 	gopkg.in/yaml.v2 v2.3.0
 )
