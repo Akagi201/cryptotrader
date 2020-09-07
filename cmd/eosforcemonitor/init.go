@@ -12,11 +12,11 @@ import (
 
 // Opts configs
 var Opts struct {
-	Conf        string        `long:"conf" description:"config file"`
-	AccountFile string        `long:"account-file" default:"accounts.json" description:"account file"`
-	RpcScheme   string        `long:"rpc-scheme" default:"https" description:"rpc scheme"`
-	RpcHost     string        `long:"rpc-host" default:"w2.eosforce.cn" description:"rpc host"`
-	LogLevel    string        `long:"log-level" default:"info" description:"Adjust the log level. Valid options are: error, warn, info, debug"`
+	Conf        string `long:"conf" description:"config file"`
+	AccountFile string `long:"account-file" default:"accounts.json" description:"account file"`
+	RpcScheme   string `long:"rpc-scheme" default:"https" description:"rpc scheme"`
+	RpcHost     string `long:"rpc-host" default:"w2.eosforce.cn" description:"rpc host"`
+	LogLevel    string `long:"log-level" default:"info" description:"Adjust the log level. Valid options are: error, warn, info, debug"`
 }
 
 func init() {

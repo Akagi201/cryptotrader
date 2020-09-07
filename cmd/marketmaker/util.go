@@ -3,7 +3,7 @@ package main
 import (
 	"math"
 
-	"github.com/Akagi201/binancego/model"
+	"github.com/Akagi201/cryptotrader/model"
 	"github.com/Akagi201/utilgo/slices"
 	talib "github.com/markcheno/go-talib"
 	log "github.com/sirupsen/logrus"

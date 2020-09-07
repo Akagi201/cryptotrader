@@ -9,9 +9,9 @@ import (
 	"github.com/Akagi201/cryptotrader/okcoin"
 	"github.com/Akagi201/cryptotrader/zb"
 	"github.com/goSTL/sort"
-	"github.com/nlopes/slack"
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
+	"github.com/slack-go/slack"
 	"github.com/spf13/cast"
 )
 
@@ -53,7 +53,11 @@ func GetPriceList(base string, quote string, exchanges []string) []ExchangePrice
 }
 
 func FindChannelByName(rtm *slack.RTM, name string) *slack.Channel {
-	for _, ch := range rtm.GetInfo().Channels {
+	chs, err := rtm.GetChannels(true)
+	if err != nil {
+		return nil
+	}
+	for _, ch := range chs {
 		if ch.Name == name {
 			return &ch
 		}
@@ -69,7 +73,7 @@ func cmp(i, j interface{}) bool {
 
 func main() {
 	slackApi := slack.New(Opts.SlackKey)
-	slackApi.SetDebug(false)
+	// slackApi.SetDebug(false)
 
 	rtm := slackApi.NewRTM()
 	go rtm.ManageConnection()

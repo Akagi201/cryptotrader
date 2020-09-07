@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
@@ -11,7 +12,11 @@ import (
 )
 
 func FindChannelByName(rtm *slack.RTM, name string) *slack.Channel {
-	for _, ch := range rtm.GetInfo().Channels {
+	chs, err := rtm.GetChannels(true)
+	if err != nil {
+		return nil
+	}
+	for _, ch := range chs {
 		if ch.Name == name {
 			return &ch
 		}
@@ -30,7 +35,7 @@ func stringToInterfaceSlice(s []string) []interface{} {
 func main() {
 	// ctx := context.Background()
 	slackApi := slack.New(Opts.SlackKey)
-	slackApi.SetDebug(true)
+	// slackApi.SetDebug(true)
 
 	rtm := slackApi.NewRTM()
 	go rtm.ManageConnection()
@@ -66,7 +71,7 @@ func main() {
 
 	go func() {
 		for {
-			zrxTicker, err := binanceApi.GetTicker("btc", "zrx")
+			zrxTicker, err := binanceApi.GetTicker(context.Background(), "btc", "zrx")
 			if err != nil {
 				log.Errorf("Get ZRX ticker failed, err: %v", err)
 			}
@@ -79,7 +84,7 @@ func main() {
 	}()
 
 	for {
-		zrxTicker, err := binanceApi.GetTicker("btc", "zrx")
+		zrxTicker, err := binanceApi.GetTicker(context.Background(), "btc", "zrx")
 		if err != nil {
 			log.Error("Get ZRX ticker failed, err: %v", err)
 		}
