@@ -24,8 +24,10 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/slack-go/slack v0.6.6
 	github.com/spf13/cast v1.3.1
+	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.1
 	github.com/tidwall/sjson v1.1.1
+	go.uber.org/ratelimit v0.1.0
 	google.golang.org/appengine v1.6.6
 	gopkg.in/yaml.v2 v2.3.0
 )
